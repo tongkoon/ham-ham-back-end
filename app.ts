@@ -1,14 +1,15 @@
 import bodyParser from "body-parser";
+import cors from "cors";
 import express from "express";
 import { router as user } from "./api/user";
 
 export const app = express();
 
-// app.use(
-//     cors({
-//       origin: "*",
-//     })
-//   );
+app.use(
+    cors({
+      origin: "*",
+    })
+  );
 app.use(bodyParser.text());
 app.use(bodyParser.json());
 // app.use("/", index);
