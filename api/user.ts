@@ -65,9 +65,8 @@ router.post('/register', async (req, res) => {
 
 router.put('/register/:uid', upload.single('image'), async (req, res) => {
     let uid = +req.params.uid;
-    const dateTime = giveCurrentDateTime();
 
-    const storageRef = ref(storage, `files/${req.file?.originalname + "    " + dateTime}`);
+    const storageRef = ref(storage, `files/${req.file?.originalname}`);
 
     const metadata = {
         contentType: req.file?.mimetype,
