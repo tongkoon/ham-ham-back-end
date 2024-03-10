@@ -29,51 +29,64 @@ router.get('/', (req, res) => {
 
 router.post('/register', upload.single('avatar'), async (req, res) => {
     let user: User = req.body;
+    let downloadUrl;
 
-    const storageRef = ref(storage, `files/${req.file?.originalname}`);
-
-    const metadata = {
-        contentType: req.file?.mimetype,
-    }
-
-    // Upload file in bucket storage
-    const snapshot = await uploadBytesResumable(storageRef, req.file!.buffer, metadata);
-
-    // Get Url Public
-    const downloadUrl = await getDownloadURL(snapshot.ref);
-
-    const saltRounds = 10
-    const password = user.password;
-    let pwdHash = "";
-
-    await bcrypt.hash(password, saltRounds)
-        .then((hash: string) => {
-            pwdHash = hash;
-        })
-        .catch(err => console.error(err.message))
-
-    let sql = 'insert into user(name,username,password,avatar,role) values(?,?,?,?,?)';
-    sql = mysql.format(sql, [
-        user.name,
-        user.username,
-        pwdHash,
-        downloadUrl,
-        'user'
-    ])
-
-    console.log(sql);
-
-    conn.query(sql, (err, result) => {
+    let sql = 'select * from user where username = ?';
+    sql = mysql.format(sql, [user.username])
+    conn.query(sql, async (err, result) => {
         if (err) {
-            conn.query("ALTER TABLE user AUTO_INCREMENT = 1")
             res.status(400)
                 .json(err)
         }
         else {
-            res.status(201)
-                .json({ affected_row: result.affectedRows, last_idx: result.insertId });
+            if (req.file?.originalname == undefined) {
+                downloadUrl = 'https://firebasestorage.googleapis.com/v0/b/test-upload-image-44e6d.appspot.com/o/files%2FDefaultPic.png?alt=media&token=d87a7086-a6e3-4814-bc01-bdf8722f4c7b'
+            } else {
+                const storageRef = ref(storage, `files/${req.file?.originalname}`);
+                const metadata = {
+                    contentType: req.file?.mimetype,
+                }
+                // Upload file in bucket storage
+                const snapshot = await uploadBytesResumable(storageRef, req.file!.buffer, metadata);
+                // Get Url Public
+                downloadUrl = await getDownloadURL(snapshot.ref);
+            }
+
+            const saltRounds = 10
+            const password = user.password;
+            let pwdHash = "";
+
+            await bcrypt.hash(password, saltRounds)
+                .then((hash: string) => {
+                    pwdHash = hash;
+                })
+                .catch(err => console.error(err.message))
+
+            sql = 'insert into user(name,username,password,avatar,role) values(?,?,?,?,?)';
+            sql = mysql.format(sql, [
+                user.name,
+                user.username,
+                pwdHash,
+                downloadUrl,
+                'user'
+            ])
+
+            conn.query(sql, (err, result) => {
+                if (err) {
+                    conn.query("ALTER TABLE user AUTO_INCREMENT = 1")
+                    res.status(400)
+                        .json(err)
+                }
+                else {
+                    res.status(201)
+                        .json({ affected_row: result.affectedRows, last_idx: result.insertId });
+                }
+            })
         }
     })
+
+
+
 })
 
 router.put('/register/:uid', upload.single('avatar'), async (req, res) => {
@@ -122,12 +135,12 @@ router.post('/login', (req, res) => {
                     if (isUser) {
                         res.json(data)
                     } else {
-                        res.json({respones:false})
+                        res.json({ respones: false })
                     }
                 })
                 .catch(err => console.error(err.message))
         } else {
-            res.json({respones:false})
+            res.json({ respones: false })
         }
     })
 })
@@ -156,10 +169,10 @@ router.post("/test", upload.single('avatar'), async (req, res) => {
     // Get Url Public
     const downloadUrl = await getDownloadURL(snapshot.ref);
     console.log(downloadUrl);
-    
-    
-    res.json({ username:user.username,url:downloadUrl})
-        
+
+
+    res.json({ username: user.username, url: downloadUrl })
+
 
 })
 
