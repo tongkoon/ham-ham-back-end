@@ -76,7 +76,7 @@ router.get('/random',(req,res)=>{
         if (err) {
             res.json({respones:false,error: err});
         } else {
-            res.json({respones:true,data: await result});
+            res.json({respones:true,pictures: await result});
         }
     })
 })
