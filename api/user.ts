@@ -63,7 +63,7 @@ router.post('/register', async (req, res) => {
     })
 })
 
-router.put('/register/:uid', upload.single('image'), async (req, res) => {
+router.put('/register/:uid', upload.single('avatar'), async (req, res) => {
     let uid = +req.params.uid;
 
     const storageRef = ref(storage, `files/${req.file?.originalname}`);
@@ -83,14 +83,14 @@ router.put('/register/:uid', upload.single('image'), async (req, res) => {
         downloadUrl,
         uid
     ]);
-    conn.query(sql,(err,result)=>{
+    conn.query(sql, (err, result) => {
         if (err) {
             res.status(400)
                 .json(err)
         }
         else {
             res.status(201)
-                .json({ affected_row: result.affectedRows});
+                .json({ affected_row: result.affectedRows });
         }
     })
 })
@@ -127,4 +127,26 @@ const giveCurrentDateTime = () => {
     return date
 }
 
+
+router.post("/test", upload.single('avatar'), async (req, res) => {
+    let user: User = req.body;
+
+    const storageRef = ref(storage, `files/${req.file?.originalname}`);
+
+    const metadata = {
+        contentType: req.file?.mimetype,
+    }
+
+    // Upload file in bucket storage
+    const snapshot = await uploadBytesResumable(storageRef, req.file!.buffer, metadata);
+
+    // Get Url Public
+    const downloadUrl = await getDownloadURL(snapshot.ref);
+    console.log(downloadUrl);
+    
+    
+    res.json({ username:user.username,url:downloadUrl})
+        
+
+})
 
