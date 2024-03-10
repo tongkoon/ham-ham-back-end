@@ -27,8 +27,20 @@ router.get('/', (req, res) => {
     });
 })
 
-router.post('/register', async (req, res) => {
+router.post('/register', upload.single('avatar'), async (req, res) => {
     let user: User = req.body;
+
+    const storageRef = ref(storage, `files/${req.file?.originalname}`);
+
+    const metadata = {
+        contentType: req.file?.mimetype,
+    }
+
+    // Upload file in bucket storage
+    const snapshot = await uploadBytesResumable(storageRef, req.file!.buffer, metadata);
+
+    // Get Url Public
+    const downloadUrl = await getDownloadURL(snapshot.ref);
 
     const saltRounds = 10
     const password = user.password;
@@ -40,12 +52,13 @@ router.post('/register', async (req, res) => {
         })
         .catch(err => console.error(err.message))
 
-    let sql = 'insert into user(name,username,password,role) values(?,?,?,?)';
+    let sql = 'insert into user(name,username,password,avatar,role) values(?,?,?,?,?)';
     sql = mysql.format(sql, [
         user.name,
         user.username,
         pwdHash,
-        user.role
+        downloadUrl,
+        'user'
     ])
 
     console.log(sql);
@@ -109,12 +122,12 @@ router.post('/login', (req, res) => {
                     if (isUser) {
                         res.json(data)
                     } else {
-                        res.json({} as User)
+                        res.json({respones:false})
                     }
                 })
                 .catch(err => console.error(err.message))
         } else {
-            res.json({} as User)
+            res.json({respones:false})
         }
     })
 })
