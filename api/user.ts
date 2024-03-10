@@ -37,7 +37,7 @@ router.post('/register', upload.single('avatar'), async (req, res) => {
         // check username is duplicate
         if (err) {
             res.status(400)
-                .json({respones: false,error:err})
+                .json({ respones: false, error: err })
         }
         else {
             // check avatar is null
@@ -78,7 +78,7 @@ router.post('/register', upload.single('avatar'), async (req, res) => {
                 if (err) {
                     conn.query("ALTER TABLE user AUTO_INCREMENT = 1")
                     res.status(400)
-                        .json({respones: false,error:err})
+                        .json({ respones: false, error: err })
                 }
                 else {
                     res.status(201)
@@ -89,7 +89,6 @@ router.post('/register', upload.single('avatar'), async (req, res) => {
         }
     })
 })
-
 
 router.post('/login', (req, res) => {
     let user: User = req.body;
@@ -115,13 +114,7 @@ router.post('/login', (req, res) => {
     })
 })
 
-const giveCurrentDateTime = () => {
-    const today = new Date();
-    const date = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + (today.getDay())
-    // const time = today.getHours() + ':' + today.getMinutes() + ':' + today.getSeconds()
-    // const dateTime = date
-    return date
-}
+
 
 
 router.post("/test", upload.single('avatar'), async (req, res) => {
