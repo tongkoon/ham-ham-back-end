@@ -37,7 +37,7 @@ router.post('/register', upload.single('avatar'), async (req, res) => {
         // check username is duplicate
         if (err) {
             res.status(400)
-                .json(err)
+                .json({respones: false,error:err})
         }
         else {
             // check avatar is null
@@ -78,51 +78,18 @@ router.post('/register', upload.single('avatar'), async (req, res) => {
                 if (err) {
                     conn.query("ALTER TABLE user AUTO_INCREMENT = 1")
                     res.status(400)
-                        .json(err)
+                        .json({respones: false,error:err})
                 }
                 else {
                     res.status(201)
-                        .json({ affected_row: result.affectedRows, last_idx: result.insertId });
+                        .json({ respones: true, affected_row: result.affectedRows, last_idx: result.insertId });
+
                 }
             })
         }
     })
-
-
-
 })
 
-router.put('/register/:uid', upload.single('avatar'), async (req, res) => {
-    let uid = +req.params.uid;
-
-    const storageRef = ref(storage, `files/${req.file?.originalname}`);
-
-    const metadata = {
-        contentType: req.file?.mimetype,
-    }
-
-    // Upload file in bucket storage
-    const snapshot = await uploadBytesResumable(storageRef, req.file!.buffer, metadata);
-
-    // Get Url Public
-    const downloadUrl = await getDownloadURL(snapshot.ref);
-
-    let sql = 'update user set avatar = ? where uid = ?';
-    sql = mysql.format(sql, [
-        downloadUrl,
-        uid
-    ]);
-    conn.query(sql, (err, result) => {
-        if (err) {
-            res.status(400)
-                .json(err)
-        }
-        else {
-            res.status(201)
-                .json({ affected_row: result.affectedRows });
-        }
-    })
-})
 
 router.post('/login', (req, res) => {
     let user: User = req.body;
