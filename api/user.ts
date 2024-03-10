@@ -1,12 +1,11 @@
-import express from 'express';
-import { conn } from '../dbconn';
-// import { TripGetResponse } from '../model/TripGetResponse';
 import bcrypt from 'bcrypt';
+import express from 'express';
 import { initializeApp } from 'firebase/app';
 import { getDownloadURL, getStorage, ref, uploadBytesResumable } from 'firebase/storage';
 import multer from 'multer';
 import mysql from "mysql";
 import firebaseConfig from '../config/firebase.config';
+import { conn } from '../dbconn';
 import { User } from '../model/User';
 
 export const router = express.Router();
@@ -83,7 +82,6 @@ router.post('/register', upload.single('avatar'), async (req, res) => {
                 else {
                     res.status(201)
                         .json({ respones: true, affected_row: result.affectedRows, last_idx: result.insertId });
-
                 }
             })
         }

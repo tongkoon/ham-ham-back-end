@@ -5,9 +5,18 @@
 // console.log(dateTime);
 // console.log(today.getDate());
 
-const today = new Date();
-    const date = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + (today.getDate())
-console.log(date);
+// const today = new Date();
+//     const date = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + (today.getDate())
+// console.log(date);
+
+const pic1 = {pid:1,result:0};
+const pic2 = {pid:8,result:1};
+
+// const sa1 = 1/(1+10**())
+
+
+console.log(5555);
+
 
 
 
@@ -59,5 +68,7 @@ console.log(date);
 // // เรียกใช้ฟังก์ชันเพื่อลบรูปภาพ
 // deleteImage('gs://test-upload-image-44e6d.appspot.com/files/'+fileName);
 // // 'gs://test-upload-image-44e6d.appspot.com/files/2eaa8a7e-d172-41f7-abed-763fb343a11f'
+
+
 
 

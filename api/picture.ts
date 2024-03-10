@@ -15,13 +15,13 @@ const storage = getStorage()
 
 const upload = multer({ storage: multer.memoryStorage() })
 
-router.get('/uid/:uid',(req,res)=>{
+router.get('/uid/:uid', (req, res) => {
     let uid = req.params.uid;
-    conn.query('select * from pictures where uid = ?',[uid],(err,result)=>{
+    conn.query('select * from pictures where uid = ?', [uid], (err, result) => {
         if (err) {
-            res.json({respones:false,error: err});
+            res.json({ respones: false, error: err });
         } else {
-            res.json({respones:true,data: result});
+            res.json({ respones: true, data: result });
         }
     })
 })
@@ -51,7 +51,7 @@ router.post('/upload', upload.single('picture'), async (req, res) => {
                     downloadUrl,
                     0,
                     date
-        
+
                 ])
                 conn.query(sql, (err, result) => {
                     if (err) {
@@ -60,7 +60,7 @@ router.post('/upload', upload.single('picture'), async (req, res) => {
                             .json({ respones: false, error: err })
                     } else {
                         res.status(201)
-                            .json({ respones: true,url:downloadUrl, affected_row: result.affectedRows, last_idx: result.insertId });
+                            .json({ respones: true, url: downloadUrl, affected_row: result.affectedRows, last_idx: result.insertId });
                     }
                 })
             }
@@ -71,24 +71,25 @@ router.post('/upload', upload.single('picture'), async (req, res) => {
     });
 })
 
-router.get('/random',(req,res)=>{
-    conn.query('SELECT * FROM pictures ORDER BY RAND() LIMIT 2',async (err,result)=>{
+router.get('/random', (req, res) => {
+    conn.query('SELECT * FROM pictures ORDER BY RAND() LIMIT 2', async (err, result) => {
         if (err) {
-            res.json({respones:false,error: err});
+            res.json({ respones: false, error: err });
         } else {
-            res.json({respones:true,pictures: await result});
+            res.json({ respones: true, pictures: result });
         }
     })
 })
 
-router.get('/test',(req,res)=>{
+
+
+router.get('/test', (req, res) => {
     res.send("Test")
 })
 
-const giveCurrentDateTime = () => {
+
+export const giveCurrentDateTime = () => {
     const today = new Date();
     const date = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + (today.getDate())
-    // const time = today.getHours() + ':' + today.getMinutes() + ':' + today.getSeconds()
-    // const dateTime = date
     return date
 }
