@@ -34,7 +34,7 @@ router.post('/upload', upload.single('picture'), async (req, res) => {
     conn.query(sql, async (err, result) => {
         if (result.length != 0) {
             if (req.file?.originalname == undefined) {
-                res.json({ respones: "False", error: 'no picture' })
+                res.json({ respones: false, error: 'no picture' })
             } else {
                 const storageRef = ref(storage, `files/${req.file?.originalname}`);
                 const metadata = {
@@ -57,16 +57,16 @@ router.post('/upload', upload.single('picture'), async (req, res) => {
                     if (err) {
                         conn.query("ALTER TABLE pictures AUTO_INCREMENT = 1")
                         res.status(400)
-                            .json({ respones: "False", error: err })
+                            .json({ respones: false, error: err })
                     } else {
                         res.status(201)
-                            .json({ respones: "True", url: downloadUrl, affected_row: result.affectedRows, last_idx: result.insertId });
+                            .json({ respones: true, url: downloadUrl, affected_row: result.affectedRows, last_idx: result.insertId });
                     }
                 })
             }
         } else {
             res.status(400)
-                .json({ respones: "False" })
+                .json({ respones: false })
         }
     });
 })
