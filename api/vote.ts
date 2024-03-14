@@ -50,6 +50,9 @@ router.post('/', (req, res) => {
     })
 })
 
+
+
+
 function K(score: number) {
     if (score < 2100) {
         return 32;

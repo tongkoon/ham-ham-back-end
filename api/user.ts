@@ -11,6 +11,7 @@ import { User } from '../model/User';
 export const router = express.Router();
 initializeApp(firebaseConfig.firebaseConfig);
 
+
 const storage = getStorage()
 
 const upload = multer({ storage: multer.memoryStorage() })
@@ -19,8 +20,9 @@ router.get('/', (req, res) => {
     const sql = "select * from user";
     conn.query(sql, (err, result, fields) => {
         if (err) {
-            res.send("Error" + err);
+            res.json({ response: false, Error: err });
         } else {
+
             res.json(result);
         }
     });
@@ -36,7 +38,7 @@ router.post('/register', upload.single('avatar'), async (req, res) => {
         // check username is duplicate
         if (err) {
             res.status(400)
-                .json({ respones: false, error: err })
+                .json({ response: false, error: err })
         }
         else {
             // check avatar is null
