@@ -1,7 +1,7 @@
 import express from 'express';
 import { conn } from '../dbconn';
 import { Vote } from '../model/Vote';
-import { giveCurrentDateTime } from './picture';
+import { giveCurrentDateTime } from './constant';
 
 
 export const router = express.Router();

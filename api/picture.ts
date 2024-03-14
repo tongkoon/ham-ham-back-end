@@ -6,6 +6,7 @@ import mysql from "mysql";
 import firebaseConfig from '../config/firebase.config';
 import { conn } from '../dbconn';
 import { User } from '../model/User';
+import { giveCurrentDateTime } from './constant';
 
 
 export const router = express.Router();
@@ -88,8 +89,4 @@ router.get('/test', (req, res) => {
 })
 
 
-export const giveCurrentDateTime = () => {
-    const today = new Date();
-    const date = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + (today.getDate())
-    return date
-}
+

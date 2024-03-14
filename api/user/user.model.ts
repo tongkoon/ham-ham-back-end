@@ -2,7 +2,7 @@ import bcrypt from 'bcrypt';
 import mysql from "mysql";
 import { conn } from "../../dbconn";
 import { User } from "../../model/User";
-import { BAD_PASSWORD, NOT_USER } from '../constant';
+import { BAD_PASSWORD, NOT_FOUND } from '../constant';
 
 
 
@@ -17,6 +17,13 @@ export const getByUsername = (username: string, callback: Function) => {
     const sql = "SELECT * FROM user where username = ?";
     conn.query(sql, [username], (err, result, fields) => {
         callback(err, result);
+    })
+}
+
+export const getUserByUid = (uid:number,callBack:Function) => {
+    const sql = 'select * from user where uid = ?'
+    conn.query(sql,[uid],(err,result,fields) => {
+        callBack(err,result)
     })
 }
 
@@ -54,7 +61,7 @@ export const authentication = (username: string, password: string, callback: Fun
                 })
         }
         else {
-            callback(err, NOT_USER)
+            callback(err, NOT_FOUND)
         }
     })
 }

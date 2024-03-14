@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { User } from '../../model/User';
-import { AVATAR_DEFAULT, BAD_PASSWORD, NOT_USER, UNDEFINED } from '../constant';
+import { AVATAR_DEFAULT, BAD_PASSWORD, NOT_FOUND, UNDEFINED } from '../constant';
 import { RESPONSE_FALSE_BAD_PASSWORD, RESPONSE_FALSE_DUPLICATE_USER, RESPONSE_FALSE_INTERNAL_SERVER_ERROR, RESPONSE_FALSE_USER_NOT_FOUND, RESPONSE_TRUE } from '../constant.response';
 import { uploadPictureFirebase } from '../uploadFirebase';
 import { authentication, getAllUser, getByUsername, insert } from './user.model';
@@ -20,18 +20,22 @@ export const findAllUsers = (req: Request, res: Response) => {
 };
 
 export const createUser = (req: Request, res: Response) => {
-    let user: User = req.body;
     let downloadUrl;
-    console.log("username" + user.username);
+    const user: User = req.body;
 
-    getByUsername(user.username, async (err: any, result: any) => {
+    const username = user.username;
+    const filePic = req.file;
+
+    console.log("username" + username);
+
+    getByUsername(username, async (err: any, result: any) => {
         // check username is duplicate
         if (result.length == 1) {
             res.status(400)
                 .json(RESPONSE_FALSE_DUPLICATE_USER)
         } else {
             // check avatar is null
-            if (req.file?.originalname == UNDEFINED) {
+            if (filePic?.originalname == UNDEFINED) {
                 // set image defaul
                 downloadUrl = AVATAR_DEFAULT
             } else {
@@ -48,8 +52,13 @@ export const createUser = (req: Request, res: Response) => {
 
 export const login = (req:Request,res:Response) => {
     let user: User = req.body;
-    authentication(user.username,user.password,(err:any,result:any)=>{
-        if(result == NOT_USER){
+    
+    // parameter
+    const username = user.username;
+    const password = user.password;
+
+    authentication(username,password,(err:any,result:any)=>{
+        if(result == NOT_FOUND){
             res.status(400)
             .json(RESPONSE_FALSE_USER_NOT_FOUND)
         }
@@ -60,8 +69,5 @@ export const login = (req:Request,res:Response) => {
         else{
             res.json({...RESPONSE_TRUE,user:result})
         }
-        
-       
     })
-
 }
