@@ -1,34 +1,3 @@
-import { expressjwt } from "express-jwt";
-import jwt from "jsonwebtoken";
-
-export const secret = "Test-JWT";
-
-export const jwtAuthen = expressjwt({
-    secret: secret,
-    algorithms: ["HS256"],
-})
-
-export function generateToken(payload: any, secretKey: string): string {
-    const token: string = jwt.sign(payload, secretKey, {
-        expiresIn: "30d", // expires in 30 days
-        issuer: "Ham-Ham"
-    });
-    return token;
-}
-
-export function verifyToken(
-    token: string,
-    secretKey: string
-): { valid: boolean; decoded?: any; error?: string } {
-    try {
-        const decodedPayload: any = jwt.verify(token, secretKey);
-        return { valid: true, decoded: decodedPayload };
-    } catch (error) {
-        return { valid: false, error: JSON.stringify(error) };
-    }
-}
-
-
 
 // const today = new Date();
 // const date = today.getFullYear() + '-' +(today.getMonth()+1) + '-' + (today.getDate())

@@ -1,9 +1,10 @@
 import { Request, Response } from 'express';
 import { User } from '../../model/User';
-import { AVATAR_DEFAULT, BAD_PASSWORD, NOT_FOUND, UNDEFINED } from '../constant';
-import { RESPONSE_FALSE_BAD_PASSWORD, RESPONSE_FALSE_DUPLICATE_USER, RESPONSE_FALSE_INTERNAL_SERVER_ERROR, RESPONSE_FALSE_USER_NOT_FOUND, RESPONSE_TRUE } from '../constant.response';
+import { AVATAR_DEFAULT, BAD_PASSWORD, NOT_FOUND, SECRET, UNDEFINED } from '../constant';
+import { RESPONSE_FALSE_BAD_PASSWORD, RESPONSE_FALSE_DUPLICATE_USER, RESPONSE_FALSE_INTERNAL_SERVER_ERROR, RESPONSE_FALSE_TOKEN, RESPONSE_FALSE_USER_NOT_FOUND, RESPONSE_TRUE } from '../constant.response';
+import { generateToken, verifyToken } from '../jwtToken';
 import { uploadPictureFirebase } from '../uploadFirebase';
-import { authentication, getAllUser, getByUsername, insert } from './user.model';
+import { authentication, getAllUser, getUserByUsername, insert } from './user.model';
 
 
 
@@ -28,7 +29,7 @@ export const createUser = (req: Request, res: Response) => {
 
     console.log("username" + username);
 
-    getByUsername(username, async (err: any, result: any) => {
+    getUserByUsername(username, async (err: any, result: any) => {
         // check username is duplicate
         if (result.length == 1) {
             res.status(400)
@@ -67,7 +68,31 @@ export const login = (req:Request,res:Response) => {
             .json(RESPONSE_FALSE_BAD_PASSWORD)
         }
         else{
-            res.json({...RESPONSE_TRUE,user:result})
+            const payload = {username:result.username,password:result.password}
+            const user = {
+                name: result.name,
+                username : result.username,
+                avatar : result.avatar,
+                role : result.role
+            }
+            const token_jwt = generateToken(payload, SECRET);
+            res.status(200)
+            .json({...RESPONSE_TRUE,token:token_jwt,user:user})
         }
     })
+}
+
+export const findUserBtToken = (req:Request,res:Response) => {
+    const token = req.body.token
+    const data = verifyToken(token,SECRET);
+
+    if(data.valid){
+        getUserByUsername(data.decoded.username,(err:any,result:any)=>{
+            res.status(200)
+            .json({...RESPONSE_TRUE,user:result})
+        })
+    }else{
+        res.status(400)
+        .json({...RESPONSE_FALSE_TOKEN})
+    }
 }

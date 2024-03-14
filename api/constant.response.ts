@@ -4,3 +4,4 @@ export const RESPONSE_FALSE_DUPLICATE_USER = { response: false, error: "Duplicat
 export const RESPONSE_FALSE_USER_NOT_FOUND = { response: false, error: "Username not found"};
 export const RESPONSE_FALSE_PICTURE_NOT_FOUND = { response: false, error: "Picture not found"};
 export const RESPONSE_FALSE_BAD_PASSWORD = { response: false, error: "Bad password"};
+export const RESPONSE_FALSE_TOKEN = { response: false, error: "Invalid signature"};

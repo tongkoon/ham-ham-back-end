@@ -13,12 +13,6 @@ export const getAllUser = (callback: Function) => {
     })
 }
 
-export const getByUsername = (username: string, callback: Function) => {
-    const sql = "SELECT * FROM user where username = ?";
-    conn.query(sql, [username], (err, result, fields) => {
-        callback(err, result);
-    })
-}
 
 export const getUserByUid = (uid:number,callBack:Function) => {
     const sql = 'select * from user where uid = ?'
@@ -63,5 +57,12 @@ export const authentication = (username: string, password: string, callback: Fun
         else {
             callback(err, NOT_FOUND)
         }
+    })
+}
+
+export const getUserByUsername = (username:string,callBack:Function) => {
+    const sql = 'select uid,name,username,avatar,role from user where username = ?'
+    conn.query(sql,[username],(err,result,fields)=>{
+        callBack(err,result)
     })
 }

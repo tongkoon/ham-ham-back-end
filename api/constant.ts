@@ -1,5 +1,7 @@
 import multer from "multer";
 
+export const SECRET = "HAM-JWT-HAM";
+
 export const upload = multer({ storage: multer.memoryStorage() })
 
 
