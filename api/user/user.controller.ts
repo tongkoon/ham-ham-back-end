@@ -90,7 +90,7 @@ export const findUserByToken = (req:Request,res:Response) => {
     if(data.valid){
         getUserByUsername(data.decoded.username,(err:any,result:any)=>{
             res.status(200)
-            .json({...RESPONSE_TRUE,user:result})
+            .json({...RESPONSE_TRUE,user:result[0]})
         })
     }else{
         res.status(400)
