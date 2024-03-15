@@ -2,8 +2,8 @@ import { Request, Response } from 'express';
 import { User } from '../../model/User';
 import { AVATAR_DEFAULT, BAD_PASSWORD, NOT_FOUND, SECRET, UNDEFINED } from '../constant';
 import { RESPONSE_FALSE_BAD_PASSWORD, RESPONSE_FALSE_DUPLICATE_USER, RESPONSE_FALSE_INTERNAL_SERVER_ERROR, RESPONSE_FALSE_TOKEN, RESPONSE_FALSE_USER_NOT_FOUND, RESPONSE_TRUE } from '../constant.response';
+import { uploadPictureFirebase } from '../firebase';
 import { generateToken, verifyToken } from '../jwtToken';
-import { uploadPictureFirebase } from '../uploadFirebase';
 import { authentication, getAllUser, getUserByUsername, insert } from './user.model';
 
 
@@ -70,6 +70,7 @@ export const login = (req:Request,res:Response) => {
         else{
             const payload = {username:result.username,password:result.password}
             const user = {
+                uid:result.uid,
                 name: result.name,
                 username : result.username,
                 avatar : result.avatar,
@@ -82,7 +83,7 @@ export const login = (req:Request,res:Response) => {
     })
 }
 
-export const findUserBtToken = (req:Request,res:Response) => {
+export const findUserByToken = (req:Request,res:Response) => {
     const token = req.body.token
     const data = verifyToken(token,SECRET);
 

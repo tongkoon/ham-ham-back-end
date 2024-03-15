@@ -2,14 +2,14 @@ import { conn } from "../../dbconn";
 import { Vote } from "../../model/Vote";
 import { giveCurrentDateTime } from "../constant";
 
-export const insert = (pic1:Vote,pic2:Vote,callBack:Function) => {
+export const insert = (pic1: Vote, pic2: Vote, callBack: Function) => {
     const pid1 = pic1.pid;
     const pid2 = pic2.pid;
-    
+
     let sql = 'select pid,score from pictures where pid = ? UNION select pid,score from pictures where pid = ?'
-    conn.query(sql,[pid1,pid2],async (err,result)=>{
+    conn.query(sql, [pid1, pid2], async (err, result) => {
         const data = await result;
-    
+
         // Score เดิม
         const Sc_a = data[0].score;
         const Sc_b = data[1].score;
@@ -35,17 +35,17 @@ export const insert = (pic1:Vote,pic2:Vote,callBack:Function) => {
         const R_b: number = Sc_b + point2
 
         const date = giveCurrentDateTime();
-        
+
         updateScore(pic1.pid, R_a)
         updateScore(pic2.pid, R_b)
 
-        insertPoint(pic1.pid, pic1.result,point1,date,)
-        insertPoint(pic2.pid,pic2.result,point2,date)
-        
-        const picture1 = {pid:pid1,score:Sc_a,K:k_a,result:S_a,E:E_a,point:point1,total:R_a}
-        const picture2 = {pid:pid2,score:Sc_b,K:k_b,result:S_b,E:E_b,point:point2,total:R_b}
-        
-        callBack(err,picture1,picture2)
+        insertPoint(pic1.pid, pic1.result, point1, date,)
+        insertPoint(pic2.pid, pic2.result, point2, date)
+
+        const picture1 = { pid: pid1, score: Sc_a, K: k_a, result: S_a, E: E_a, point: point1, total: R_a }
+        const picture2 = { pid: pid2, score: Sc_b, K: k_b, result: S_b, E: E_b, point: point2, total: R_b }
+
+        callBack(err, picture1, picture2)
     })
 }
 
@@ -67,4 +67,60 @@ function updateScore(pid: number, point: number) {
 function insertPoint(pid: number, result: number, point: number, date: string) {
     conn.query('INSERT INTO vote(pid, result, point, date) VALUES (?, ?, ?, ?)',
         [pid, result, point, date])
+}
+
+export const getTrends = (pid: number, callBack: Function) => {
+    // เวลาใน node js และ database ไม่ตีงกัน 1 วัน
+    const sql = 'SELECT pid,result,SUM(point) as totalPoint,DATE_FORMAT(`date`, \'%Y-%m-%d\') AS date ' +
+        'FROM `vote` ' +
+        'WHERE `date` >= DATE_SUB(CURDATE(), INTERVAL 6 DAY) and pid = ? ' +
+        'GROUP BY result,date ' +
+        'ORDER BY `date`,`result`'
+
+    conn.query(sql, pid, (err, result) => {
+        console.log(result);
+
+        let jsonData = [];
+        let currentDate = null;
+        let currentData: any = { '0': 0, '1': 0 };
+
+        for (let i = 0; i < result.length; i++) {
+
+            // แปล date ให้อยู่ในรูป 2024-03-15
+            let date = result[i].date;
+            let formattedDate = new Date(date).toISOString().split('T')[0];
+
+            let result_ = result[i].result;
+            let totalPoint = result[i].totalPoint;
+        
+            // หากมีวันที่ใหม่ ให้เพิ่มข้อมูลใหม่เข้าไปในอาร์เรย์ jsonData
+            if (currentDate !== formattedDate) {
+                // เพิ่มข้อมูลของวันที่เก่าเข้าในอาร์เรย์ jsonData หากมี
+                if (currentDate !== null) {
+                    jsonData.push(currentData);
+                }
+                currentDate = formattedDate;
+                // สร้างข้อมูลใหม่สำหรับวันที่ใหม่
+                currentData = { date: formattedDate,'0': 0, '1': 0 };
+            }
+
+            // กำหนดค่า totalPoint ตาม result_ ในอ็อบเจกต์ของวันนั้น
+            currentData[result_] = totalPoint;
+        }
+
+        // เพิ่มข้อมูลของวันที่สุดท้ายเข้าในอาร์เรย์ jsonData
+        if (currentDate !== null) {
+            jsonData.push(currentData);
+        }
+
+        console.log(jsonData);
+        jsonData.forEach(element => {
+            console.log(element['date']);
+            console.log("Day "+new Date(element['date']).getDate());
+            console.log("Lose "+element['0']);
+            console.log("Win "+element['1']+"\n");
+        });
+
+        callBack(err, jsonData)
+    })
 }

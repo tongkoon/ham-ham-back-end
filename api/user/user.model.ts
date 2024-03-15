@@ -13,13 +13,20 @@ export const getAllUser = (callback: Function) => {
     })
 }
 
-
 export const getUserByUid = (uid:number,callBack:Function) => {
     const sql = 'select * from user where uid = ?'
     conn.query(sql,[uid],(err,result,fields) => {
         callBack(err,result)
     })
 }
+
+export const getUserByUsername = (username:string,callBack:Function) => {
+    const sql = 'select uid,name,username,avatar,role from user where username = ?'
+    conn.query(sql,[username],(err,result,fields)=>{
+        callBack(err,result)
+    })
+}
+
 
 export const insert = async (user: User, avatar: string, callback: Function) => {
     const hPwd = await bcrypt.hash(user.password, 10)
@@ -60,9 +67,3 @@ export const authentication = (username: string, password: string, callback: Fun
     })
 }
 
-export const getUserByUsername = (username:string,callBack:Function) => {
-    const sql = 'select uid,name,username,avatar,role from user where username = ?'
-    conn.query(sql,[username],(err,result,fields)=>{
-        callBack(err,result)
-    })
-}

@@ -6,6 +6,8 @@
 // console.log(dateTime);
 // console.log(today.getDate());
 
+import { giveCurrentDateTime } from "./constant";
+
 
 // const today = new Date();
 //     const date = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + (today.getDate())
@@ -66,5 +68,7 @@
 // // 'gs://test-upload-image-44e6d.appspot.com/files/2eaa8a7e-d172-41f7-abed-763fb343a11f'
 
 
+
+console.log(giveCurrentDateTime());
 
 
