@@ -60,11 +60,11 @@ export const login = (req:Request,res:Response) => {
 
     authentication(username,password,(err:any,result:any)=>{
         if(result == NOT_FOUND){
-            res.status(400)
+            res.status(200)
             .json(RESPONSE_FALSE_USER_NOT_FOUND)
         }
         else if(result == BAD_PASSWORD){
-            res.status(400)
+            res.status(200)
             .json(RESPONSE_FALSE_BAD_PASSWORD)
         }
         else{
