@@ -40,7 +40,7 @@ export const findPictureByUid = (req: Request, res: Response) => {
         }
         else {
             res.status(200)
-                .json({ ...RESPONSE_TRUE, picture: result })
+                .json({ ...RESPONSE_TRUE, pictures: result })
         }
     })
 }

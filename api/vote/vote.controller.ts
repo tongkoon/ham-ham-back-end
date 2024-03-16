@@ -12,15 +12,15 @@ export const votePicture = (req: Request, res: Response) => {
     })
 }
 
-export const historyTrends = (req:Request,res:Response) => {
+export const trends = (req:Request,res:Response) => {
     const pid = req.params.pid;
-    getTrends(+pid,(err:any,result:any)=>{
+    getTrends(+pid,(err:any,date:any,win:any)=>{
         if(err){
             res.status(400)
             .json({...RESPONSE_FALSE,error:err})
         }else{
             res.status(200)
-            .json({...RESPONSE_TRUE,result})
+            .json({...RESPONSE_TRUE,date:date,win:win})
         }
     })
 }

@@ -50,7 +50,7 @@ export const getPictureRandom = (callBack:Function) => {
 }
 
 export const getPictureRank = (callBack:Function) => {
-    const sql = 'SELECT pid,user.uid,user.avatar,url,score,DATE_FORMAT(`date`, \'%d %M %Y\') AS date FROM `pictures`,user where pictures.uid = user.uid ORDER BY score DESC LIMIT 10'
+    const sql = 'SELECT pid,user.uid,user.username,user.avatar,url,score,DATE_FORMAT(`date`, \'%d %M %Y\') AS date FROM `pictures`,user where pictures.uid = user.uid ORDER BY score DESC LIMIT 10'
     conn.query(sql,(err,result)=>{
         callBack(err,result)
     })

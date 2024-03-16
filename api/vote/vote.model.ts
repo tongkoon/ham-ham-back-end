@@ -80,47 +80,76 @@ export const getTrends = (pid: number, callBack: Function) => {
     conn.query(sql, pid, (err, result) => {
         console.log(result);
 
-        let jsonData = [];
         let currentDate = null;
-        let currentData: any = { '0': 0, '1': 0 };
+        let list_date=[];
+        let list_win: null[]=[];
 
+        console.log(result.length);
+        let c = 0;
         for (let i = 0; i < result.length; i++) {
-
-            // แปล date ให้อยู่ในรูป 2024-03-15
+            console.log(result[i].date+' result:'+result[i].result);
+            
             let date = result[i].date;
             let formattedDate = new Date(date).toISOString().split('T')[0];
 
-            let result_ = result[i].result;
-            let totalPoint = result[i].totalPoint;
-        
-            // หากมีวันที่ใหม่ ให้เพิ่มข้อมูลใหม่เข้าไปในอาร์เรย์ jsonData
             if (currentDate !== formattedDate) {
-                // เพิ่มข้อมูลของวันที่เก่าเข้าในอาร์เรย์ jsonData หากมี
-                if (currentDate !== null) {
-                    jsonData.push(currentData);
+                list_date[c] = formattedDate;
+                if(currentDate == formattedDate){
+                    list_win[c] = result[i].totalPoint
                 }
+
+                console.log('p'+date);
                 currentDate = formattedDate;
-                // สร้างข้อมูลใหม่สำหรับวันที่ใหม่
-                currentData = { date: formattedDate,'0': 0, '1': 0 };
+                c=c+1;
             }
 
-            // กำหนดค่า totalPoint ตาม result_ ในอ็อบเจกต์ของวันนั้น
-            currentData[result_] = totalPoint;
+            
+
+            // if(result[i].result == 1){list_win[c]=result[c].totalPoint}
+            
         }
 
-        // เพิ่มข้อมูลของวันที่สุดท้ายเข้าในอาร์เรย์ jsonData
-        if (currentDate !== null) {
-            jsonData.push(currentData);
-        }
+        // let jsonData = [];
+        // let currentDate = null;
+        // let currentData: any = { '0': 0, '1': 0 };
 
-        console.log(jsonData);
-        jsonData.forEach(element => {
-            console.log(element['date']);
-            console.log("Day "+new Date(element['date']).getDate());
-            console.log("Lose "+element['0']);
-            console.log("Win "+element['1']+"\n");
-        });
+        // for (let i = 0; i < result.length; i++) {
 
-        callBack(err, jsonData)
+        //     // แปล date ให้อยู่ในรูป 2024-03-15
+        //     let date = result[i].date;
+        //     let formattedDate = new Date(date).toISOString().split('T')[0];
+
+        //     let result_ = result[i].result;
+        //     let totalPoint = result[i].totalPoint;
+        
+        //     // หากมีวันที่ใหม่ ให้เพิ่มข้อมูลใหม่เข้าไปในอาร์เรย์ jsonData
+        //     if (currentDate !== formattedDate) {
+        //         // เพิ่มข้อมูลของวันที่เก่าเข้าในอาร์เรย์ jsonData หากมี
+        //         if (currentDate !== null) {
+        //             jsonData.push(currentData);
+        //         }
+        //         currentDate = formattedDate;
+        //         // สร้างข้อมูลใหม่สำหรับวันที่ใหม่
+        //         currentData = { date: formattedDate,'0': 0, '1': 0 };
+        //     }
+
+        //     // กำหนดค่า totalPoint ตาม result_ ในอ็อบเจกต์ของวันนั้น
+        //     currentData[result_] = totalPoint;
+        // }
+
+        // // เพิ่มข้อมูลของวันที่สุดท้ายเข้าในอาร์เรย์ jsonData
+        // if (currentDate !== null) {
+        //     jsonData.push(currentData);
+        // }
+
+        // console.log(jsonData);
+        // jsonData.forEach(element => {
+        //     console.log(element['date']);
+        //     console.log("Day "+new Date(element['date']).getDate());
+        //     console.log("Lose "+element['0']);
+        //     console.log("Win "+element['1']+"\n");
+        // });
+
+        callBack(err, list_date,list_win)
     })
 }
