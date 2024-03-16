@@ -81,75 +81,65 @@ export const getTrends = (pid: number, callBack: Function) => {
         console.log(result);
 
         let currentDate = null;
-        let list_date=[];
-        let list_win: null[]=[];
+        let list_date = [];
+        let list_win = [];
+        let list_lose = [];
 
-        console.log(result.length);
+        let tmp = null;
+        let name_month = "";
+        let m = 0;
+        // let data_tmp = ['2024-02-15', '2024-03-16', '2024-03-17',
+        //     '2024-03-18', '2024-03-19',]
+
         let c = 0;
         for (let i = 0; i < result.length; i++) {
-            console.log(result[i].date+' result:'+result[i].result);
-            
+            // console.log(result[i].date + ' result:' + result[i].result);
+            let res = result[i].result;
+            let totalPoint = result[i].totalPoint;
             let date = result[i].date;
-            let formattedDate = new Date(date).toISOString().split('T')[0];
+            let formattedDate = new Date(date).getDate();
+
+            let month = new Date(date).getMonth() + 1;
+            // console.log('month : ' + month);
+
+            if (tmp == null) {
+                tmp = month;
+                name_month = setnameMonth(date)
+                m = m + 1;
+            }
+
+            if (tmp != month) {
+                tmp = month;
+                name_month = name_month + '-' + setnameMonth(date)
+                m = m + 1
+            }
 
             if (currentDate !== formattedDate) {
                 list_date[c] = formattedDate;
-                if(currentDate == formattedDate){
-                    list_win[c] = result[i].totalPoint
-                }
-
-                console.log('p'+date);
                 currentDate = formattedDate;
-                c=c+1;
+
+                list_lose[c] = 0;
+                if (res == 0) {
+                    list_lose[c] = Math.abs(totalPoint);
+                }
+                c = c + 1;
             }
 
-            
-
-            // if(result[i].result == 1){list_win[c]=result[c].totalPoint}
-            
+            if (currentDate == formattedDate) {
+                list_win[c - 1] = 0
+                if (res == 1) {
+                    list_win[c - 1] = totalPoint;
+                }
+            }
         }
-
-        // let jsonData = [];
-        // let currentDate = null;
-        // let currentData: any = { '0': 0, '1': 0 };
-
-        // for (let i = 0; i < result.length; i++) {
-
-        //     // แปล date ให้อยู่ในรูป 2024-03-15
-        //     let date = result[i].date;
-        //     let formattedDate = new Date(date).toISOString().split('T')[0];
-
-        //     let result_ = result[i].result;
-        //     let totalPoint = result[i].totalPoint;
-        
-        //     // หากมีวันที่ใหม่ ให้เพิ่มข้อมูลใหม่เข้าไปในอาร์เรย์ jsonData
-        //     if (currentDate !== formattedDate) {
-        //         // เพิ่มข้อมูลของวันที่เก่าเข้าในอาร์เรย์ jsonData หากมี
-        //         if (currentDate !== null) {
-        //             jsonData.push(currentData);
-        //         }
-        //         currentDate = formattedDate;
-        //         // สร้างข้อมูลใหม่สำหรับวันที่ใหม่
-        //         currentData = { date: formattedDate,'0': 0, '1': 0 };
-        //     }
-
-        //     // กำหนดค่า totalPoint ตาม result_ ในอ็อบเจกต์ของวันนั้น
-        //     currentData[result_] = totalPoint;
-        // }
-
-        // // เพิ่มข้อมูลของวันที่สุดท้ายเข้าในอาร์เรย์ jsonData
-        // if (currentDate !== null) {
-        //     jsonData.push(currentData);
-        // }
-
-        // console.log(jsonData);
-        // jsonData.forEach(element => {
-        //     console.log(element['date']);
-        //     console.log("Day "+new Date(element['date']).getDate());
-        //     console.log("Lose "+element['0']);
-        //     console.log("Win "+element['1']+"\n");
-        // });
-
-        callBack(err, list_date,list_win)
+        // console.log(list_win);
+        // console.log(list_lose);
+        console.log(name_month);
+        callBack(err, name_month, list_date, list_win, list_lose)
     })
+}
+
+function setnameMonth(date: string) {
+    const name_month = new Intl.DateTimeFormat('en-US', { month: 'long' }).format(new Date(date));
+    return name_month;
 }
