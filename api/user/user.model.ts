@@ -16,7 +16,7 @@ export const getAllUser = (callback: Function) => {
 export const getUserByUid = (uid:number,callBack:Function) => {
     const sql = 'select * from user where uid = ?'
     conn.query(sql,[uid],(err,result,fields) => {
-        callBack(err,result)
+        callBack(err,result[0])
     })
 }
 
@@ -67,3 +67,18 @@ export const authentication = (username: string, password: string, callback: Fun
     })
 }
 
+export const updateNornal = (name:string,username:string,avatar:string,uid:number,callBack:Function) => {
+    let sql = 'update user set name = ?,username = ?, avatar = ? where uid = ?'
+    conn.query(sql, [name,username, avatar,uid], (err, result) => {
+        callBack(err,result)
+    })
+}
+
+
+export const updatePassword = async (new_pwd:string,uid:number,callBack:Function) => {
+    const sql = 'update user set password = ? where uid = ?'
+    const hPwd = await bcrypt.hash(new_pwd, 10)
+    conn.query(sql,[hPwd,uid],(err,result)=>{
+        callBack(err,result)
+    })
+}

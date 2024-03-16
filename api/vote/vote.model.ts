@@ -13,22 +13,27 @@ export const insert = (pic1: Vote, pic2: Vote, callBack: Function) => {
         // Score เดิม
         const Sc_a = data[0].score;
         const Sc_b = data[1].score;
+        console.log('scA'+Sc_a);
+        console.log('scB'+Sc_b);
 
         // ผลแพ้ชนะ
         const S_a = pic1.result
         const S_b = pic2.result
+        console.log('reA'+S_a);
+console.log('reB'+S_b);
 
         // เรทคะแนนที่ควรได้
-        const E_a: number = +(1 / (1 + (10 ** ((S_a - Sc_a) / 400)))).toFixed(2)
-        const E_b: number = +(1 / (1 + (10 ** ((S_b - Sc_b) / 400)))).toFixed(2)
-
+        const E_a: number = +(1 / (1 + (10 ** ((Sc_b - Sc_a) / 400)))).toFixed(3)
+        const E_b: number = +(1 / (1 + (10 ** ((Sc_a - Sc_b) / 400)))).toFixed(3)
+        console.log('EA'+E_a);
+        console.log('EB'+E_b);
         // ค่า K ที่คำนวณจากคะแนนเดิม
-        const k_a = K(S_a);
-        const k_b = K(S_b);
+        const k_a = K(Sc_a);
+        const k_b = K(Sc_b);
 
         // คะแนนที่ได้
-        const point1 = k_a * (pic1.result - E_a)
-        const point2 = k_b * (pic2.result - E_b)
+        const point1 = k_a * (S_a - E_a)
+        const point2 = k_b * (S_b - E_b)
 
         // ผลรวมคะแนนล่าสุด
         const R_a: number = Sc_a + point1
@@ -50,7 +55,7 @@ export const insert = (pic1: Vote, pic2: Vote, callBack: Function) => {
 }
 
 
-function K(score: number) {
+export function K(score: number) {
     if (score < 2100) {
         return 32;
     } else if (score <= 2400) {

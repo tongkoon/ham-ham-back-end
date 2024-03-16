@@ -6,6 +6,9 @@
 // console.log(dateTime);
 // console.log(today.getDate());
 
+import { giveCurrentDateTime } from "./constant";
+import { K } from "./vote/vote.model";
+
 
 
 // const today = new Date();
@@ -69,48 +72,92 @@
 
 
 // console.log(giveCurrentDateTime());
-const date = new Date('2024-3-15');
-const monthName = new Intl.DateTimeFormat('en-US', { month: 'long' }).format(date)
-console.log(monthName);
+
+
+// const date = new Date('2024-3-15');
+// const monthName = new Intl.DateTimeFormat('en-US', { month: 'long' }).format(date)
+// console.log(monthName);
 
 // let jsonData = [];
-        // let currentDate = null;
-        // let currentData: any = { '0': 0, '1': 0 };
+// let currentDate = null;
+// let currentData: any = { '0': 0, '1': 0 };
 
-        // for (let i = 0; i < result.length; i++) {
+// for (let i = 0; i < result.length; i++) {
 
-        //     // แปล date ให้อยู่ในรูป 2024-03-15
-        //     let date = result[i].date;
-        //     let formattedDate = new Date(date).toISOString().split('T')[0];
+//     // แปล date ให้อยู่ในรูป 2024-03-15
+//     let date = result[i].date;
+//     let formattedDate = new Date(date).toISOString().split('T')[0];
 
-        //     let result_ = result[i].result;
-        //     let totalPoint = result[i].totalPoint;
+//     let result_ = result[i].result;
+//     let totalPoint = result[i].totalPoint;
 
-        //     // หากมีวันที่ใหม่ ให้เพิ่มข้อมูลใหม่เข้าไปในอาร์เรย์ jsonData
-        //     if (currentDate !== formattedDate) {
-        //         // เพิ่มข้อมูลของวันที่เก่าเข้าในอาร์เรย์ jsonData หากมี
-        //         if (currentDate !== null) {
-        //             jsonData.push(currentData);
-        //         }
-        //         currentDate = formattedDate;
-        //         // สร้างข้อมูลใหม่สำหรับวันที่ใหม่
-        //         currentData = { date: formattedDate,'0': 0, '1': 0 };
-        //     }
+//     // หากมีวันที่ใหม่ ให้เพิ่มข้อมูลใหม่เข้าไปในอาร์เรย์ jsonData
+//     if (currentDate !== formattedDate) {
+//         // เพิ่มข้อมูลของวันที่เก่าเข้าในอาร์เรย์ jsonData หากมี
+//         if (currentDate !== null) {
+//             jsonData.push(currentData);
+//         }
+//         currentDate = formattedDate;
+//         // สร้างข้อมูลใหม่สำหรับวันที่ใหม่
+//         currentData = { date: formattedDate,'0': 0, '1': 0 };
+//     }
 
-        //     // กำหนดค่า totalPoint ตาม result_ ในอ็อบเจกต์ของวันนั้น
-        //     currentData[result_] = totalPoint;
-        // }
+//     // กำหนดค่า totalPoint ตาม result_ ในอ็อบเจกต์ของวันนั้น
+//     currentData[result_] = totalPoint;
+// }
 
-        // // เพิ่มข้อมูลของวันที่สุดท้ายเข้าในอาร์เรย์ jsonData
-        // if (currentDate !== null) {
-        //     jsonData.push(currentData);
-        // }
+// // เพิ่มข้อมูลของวันที่สุดท้ายเข้าในอาร์เรย์ jsonData
+// if (currentDate !== null) {
+//     jsonData.push(currentData);
+// }
 
-        // console.log(jsonData);
-        // jsonData.forEach(element => {
-        //     console.log(element['date']);
-        //     console.log("Day "+new Date(element['date']).getDate());
-        //     console.log("Lose "+element['0']);
-        //     console.log("Win "+element['1']+"\n");
-        // });
+// console.log(jsonData);
+// jsonData.forEach(element => {
+//     console.log(element['date']);
+//     console.log("Day "+new Date(element['date']).getDate());
+//     console.log("Lose "+element['0']);
+//     console.log("Win "+element['1']+"\n");
+// });
 
+function elo(scoreA:number,resA:number,scoreB:number,resB:number) {
+    const Sc_a = scoreA;
+    const Sc_b = scoreB;
+    console.log('scA'+Sc_a);
+    console.log('scB'+Sc_b);
+    // ผลแพ้ชนะ
+    const S_a = resA
+    const S_b = resB
+console.log('reA'+S_a);
+console.log('reB'+S_b);
+
+
+    // เรทคะแนนที่ควรได้
+    const E_a: number = +(1 / (1 + (10 ** ((Sc_b - Sc_a) / 400)))).toFixed(3)
+    const E_b: number = +(1 / (1 + (10 ** ((Sc_a - Sc_b) / 400)))).toFixed(3)
+console.log('EA'+E_a);
+console.log('EB'+E_b);
+
+
+
+    // ค่า K ที่คำนวณจากคะแนนเดิม
+    const k_a = K(Sc_a);
+    const k_b = K(Sc_b);
+
+    // คะแนนที่ได้
+    const point1 = k_a * (resA - E_a)
+    const point2 = k_b * (resB - E_b)
+
+    // ผลรวมคะแนนล่าสุด
+    const R_a: number = Sc_a + point1
+    const R_b: number = Sc_b + point2
+
+    const date = giveCurrentDateTime();
+
+    const picture1 = {  score: Sc_a, K: k_a, result: S_a, E: E_a, point: point1, total: R_a }
+    const picture2 = {  score: Sc_b, K: k_b, result: S_b, E: E_b, point: point2, total: R_b }
+    console.log(picture1);
+    console.log(picture2);
+    
+}
+
+elo(2600,1,2300,0)

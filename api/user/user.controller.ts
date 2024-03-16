@@ -1,21 +1,19 @@
 import { Request, Response } from 'express';
 import { User } from '../../model/User';
 import { AVATAR_DEFAULT, BAD_PASSWORD, NOT_FOUND, SECRET, UNDEFINED } from '../constant';
-import { RESPONSE_FALSE_BAD_PASSWORD, RESPONSE_FALSE_DUPLICATE_USER, RESPONSE_FALSE_INTERNAL_SERVER_ERROR, RESPONSE_FALSE_TOKEN, RESPONSE_FALSE_USER_NOT_FOUND, RESPONSE_TRUE } from '../constant.response';
-import { uploadPictureFirebase } from '../firebase';
+import { RESPONSE_FALSE, RESPONSE_FALSE_BAD_PASSWORD, RESPONSE_FALSE_DUPLICATE_USER, RESPONSE_FALSE_INTERNAL_SERVER_ERROR, RESPONSE_FALSE_TOKEN, RESPONSE_FALSE_USER_NOT_FOUND, RESPONSE_TRUE } from '../constant.response';
+import { removeAvatarFirebase, uploadPictureFirebase } from '../firebase';
 import { generateToken, verifyToken } from '../jwtToken';
-import { authentication, getAllUser, getUserByUsername, insert } from './user.model';
+import { authentication, getAllUser, getUserByUsername, insert, updateNornal, updatePassword } from './user.model';
 
 
 
 export const findAllUsers = (req: Request, res: Response) => {
     getAllUser((err: any, result: any) => {
         if (err) {
-            res.status(500)
-                .json(RESPONSE_FALSE_INTERNAL_SERVER_ERROR);
+            res.json(RESPONSE_FALSE_INTERNAL_SERVER_ERROR);
         } else {
-            res.status(200)
-                .json({ ...RESPONSE_TRUE, user: result })
+            res.json({ ...RESPONSE_TRUE, user: result })
         }
     })
 };
@@ -32,8 +30,7 @@ export const createUser = (req: Request, res: Response) => {
     getUserByUsername(username, async (err: any, result: any) => {
         // check username is duplicate
         if (result.length == 1) {
-            res.status(400)
-                .json(RESPONSE_FALSE_DUPLICATE_USER)
+            res.json(RESPONSE_FALSE_DUPLICATE_USER)
         } else {
             // check avatar is null
             if (filePic?.originalname == UNDEFINED) {
@@ -44,56 +41,100 @@ export const createUser = (req: Request, res: Response) => {
             }
 
             insert(user, downloadUrl, (err: any, result: any) => {
-                res.status(201)
-                    .json({ ...RESPONSE_TRUE, affected_row: result.affectedRows, last_idx: result.insertId });
+                res.json({ ...RESPONSE_TRUE, affected_row: result.affectedRows, last_idx: result.insertId });
             })
         }
     })
 }
 
-export const login = (req:Request,res:Response) => {
+export const login = (req: Request, res: Response) => {
     let user: User = req.body;
-    
+
     // parameter
     const username = user.username;
     const password = user.password;
 
-    authentication(username,password,(err:any,result:any)=>{
-        if(result == NOT_FOUND){
-            res.status(200)
-            .json(RESPONSE_FALSE_USER_NOT_FOUND)
+    authentication(username, password, (err: any, result: any) => {
+        if (result == NOT_FOUND) {
+            res.json(RESPONSE_FALSE_USER_NOT_FOUND)
         }
-        else if(result == BAD_PASSWORD){
-            res.status(200)
-            .json(RESPONSE_FALSE_BAD_PASSWORD)
+        else if (result == BAD_PASSWORD) {
+            res.json(RESPONSE_FALSE_BAD_PASSWORD)
         }
-        else{
-            const payload = {username:result.username,password:result.password}
+        else {
+            const payload = { username: result.username, password: result.password }
             const user = {
-                uid:result.uid,
+                uid: result.uid,
                 name: result.name,
-                username : result.username,
-                avatar : result.avatar,
-                role : result.role
+                username: result.username,
+                avatar: result.avatar,
+                role: result.role
             }
             const token_jwt = generateToken(payload, SECRET);
             res.status(200)
-            .json({...RESPONSE_TRUE,token:token_jwt,user:user})
+                .json({ ...RESPONSE_TRUE, token: token_jwt, user: user })
         }
     })
 }
 
-export const findUserByToken = (req:Request,res:Response) => {
+export const findUserByToken = (req: Request, res: Response) => {
     const token = req.body.token
-    const data = verifyToken(token,SECRET);
+    const data = verifyToken(token, SECRET);
 
-    if(data.valid){
-        getUserByUsername(data.decoded.username,(err:any,result:any)=>{
-            res.status(200)
-            .json({...RESPONSE_TRUE,user:result[0]})
+    if (data.valid) {
+        getUserByUsername(data.decoded.username, (err: any, result: any) => {
+            res.json({ ...RESPONSE_TRUE, user: result[0] })
         })
-    }else{
-        res.status(400)
-        .json({...RESPONSE_FALSE_TOKEN})
+    } else {
+        res.json({ ...RESPONSE_FALSE_TOKEN })
     }
+}
+
+export const editUser = async (req: Request, res: Response) => {
+    const uid = req.params.uid;
+    const name = req.body.name;
+    const username = req.body.username;
+    const pwd = req.body.password
+    const new_pwd = req.body.newPassword
+    const downloadUrl = await uploadPictureFirebase(req);
+    
+    removeAvatarFirebase(+uid)
+    // Update Name, Username and Picture
+    updateNornal(name, username,downloadUrl, +uid, (err: any, result: any) => {
+        if (err) {
+            res.json({ ...RESPONSE_FALSE })
+        }
+        else {
+            // Check Lenght Password And New Password for Change
+            if (pwd.length != 0 && new_pwd.length != 0) {
+                // Compare username and Password
+                authentication(username, pwd, (err: any, result: any) => {
+                    if (err) {
+                        res.json({ ...RESPONSE_FALSE, err })
+                    }
+                    else {
+                        // Password Incorrect
+                        if (result == BAD_PASSWORD) {
+                            res.json({ ...RESPONSE_FALSE_BAD_PASSWORD, detail: 'name and username success'})
+                        } 
+                        // Password Correct Change new Password
+                        else {
+                            updatePassword(new_pwd, +uid, (err: any, result: any) => {
+                                if (err) {
+                                    res.json({ ...RESPONSE_FALSE })
+                                }
+                                else {
+                                    res.json({ ...RESPONSE_TRUE, detail: 'name, username, picture and password success' })
+                                }
+                            })
+                        }
+                    }
+                })
+            }
+            else {
+                res.json({ ...RESPONSE_TRUE, detail: 'name, username and picture success' })
+            }
+        }
+    })
+
 }

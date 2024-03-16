@@ -10,8 +10,16 @@ export const UNDEFINED = undefined;
 export const NOT_FOUND = 0;
 export const BAD_PASSWORD = -1;
 
+export const SQL_NULL = 1048;
+
 export const giveCurrentDateTime = () => {
     const today = new Date();
     const date = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + (today.getDate())
     return date
+}
+
+export const giveCurrentTime = () => {
+    const today = new Date();
+    const time = today.getHours()+':'+today.getMinutes()+':'+today.getSeconds();
+    return time
 }

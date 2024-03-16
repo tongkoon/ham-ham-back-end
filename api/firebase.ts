@@ -2,14 +2,17 @@ import { Request } from 'express';
 import { initializeApp } from 'firebase/app';
 import { deleteObject, getDownloadURL, getStorage, ref, uploadBytesResumable } from "firebase/storage";
 import firebaseConfig from '../config/firebase.config';
-import { PATH_FIREBASE_STORAGE } from './constant';
+import { PATH_FIREBASE_STORAGE, giveCurrentDateTime, giveCurrentTime } from './constant';
 import { getPictureByPid } from './picture/picture.model';
+import { getUserByUid } from './user/user.model';
 
 initializeApp(firebaseConfig.firebaseConfig);
 const storage = getStorage()
 
 export async function uploadPictureFirebase(req: Request) {
-    const storageRef = ref(storage, `files/${req.file?.originalname}`);
+    const date = giveCurrentDateTime();
+    const time = giveCurrentTime();
+    const storageRef = ref(storage, `files/${req.file?.originalname}`+date+'-'+time);
     const metadata = {
         contentType: req.file?.mimetype,
     }
@@ -45,4 +48,24 @@ function convert_url_namefile(url: string) {
     const fileName = pathname.substring(pathname.lastIndexOf('/') + 1);
 
     return fileName;
+}
+
+
+export function removeAvatarFirebase(uid: number) {
+    let avatarUrl;
+    getUserByUid(+uid, async (err: any, result: any) => {
+        avatarUrl = await result.avatar;
+        console.log(avatarUrl);
+
+        const fileName = convert_url_namefile(avatarUrl); 
+        const imagePath = PATH_FIREBASE_STORAGE + fileName;
+        const imageRef = ref(storage, imagePath);
+        try {
+            // ทำการลบไฟล์
+            await deleteObject(imageRef);
+            console.log(`Image at ${imagePath} has been deleted successfully.`);
+        } catch (error) {
+            console.error('Error deleting image:', error);
+        }
+    })
 }

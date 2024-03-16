@@ -10,7 +10,7 @@ router.get('/uid/:uid',findPictureByUid);
 router.get('/random',findPictureRandom)
 router.get('/rank', findPictureRank)
 
-router.post('/upload', upload.single('picture'),uploadPicture);
+router.post('/upload', upload.single('picture'),uploadPicture); //upload picture
 
 router.delete('/:pid',deletePicture)
 
