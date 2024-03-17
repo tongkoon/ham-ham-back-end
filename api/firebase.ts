@@ -12,7 +12,8 @@ const storage = getStorage()
 export async function uploadPictureFirebase(req: Request) {
     const date = giveCurrentDateTime();
     const time = giveCurrentTime();
-    const storageRef = ref(storage, `files/${req.file?.originalname}`+date+'-'+time);
+    const name = generatePictureName(20);
+    const storageRef = ref(storage, `files/${name}`+date+'-'+time);
     const metadata = {
         contentType: req.file?.mimetype,
     }
@@ -68,4 +69,14 @@ export function removeAvatarFirebase(uid: number) {
             console.error('Error deleting image:', error);
         }
     })
+}
+
+function generatePictureName(length: number): string {
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let result = '';
+    const charactersLength = characters.length;
+    for (let i = 0; i < length; i++) {
+        result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+    return result;
 }
