@@ -1,9 +1,10 @@
 import express from 'express';
 import { upload } from '../constant';
-import { createUser, editUser, findAllUsers, findUserByToken, login } from './user.controller';
+import { createUser, editUser, findAllUsers, findByUserId, findUserByToken, login } from './user.controller';
 export const router = express.Router();
 
 router.get('/',findAllUsers); //Get All User
+router.get('/getById/:uid',findByUserId) // Get By User ID
 
 router.post('/register', upload.single('avatar'),createUser); //Register User
 router.post('/login',login); //Login
