@@ -75,7 +75,6 @@ function insertPoint(pid: number, result: number, point: number, date: string) {
 }
 
 export const getTrends = (pid: number, callBack: Function) => {
-    // เวลาใน node js และ database ไม่ตีงกัน 1 วัน
     const sql = 'SELECT pid,result,SUM(point) as totalPoint,DATE_FORMAT(`date`, \'%Y-%m-%d\') AS date ' +
         'FROM `vote` ' +
         'WHERE `date` >= DATE_SUB(CURDATE(), INTERVAL 6 DAY) and pid = ? ' +
@@ -92,7 +91,6 @@ export const getTrends = (pid: number, callBack: Function) => {
 
         let tmp = null;
         let name_month = "";
-        let m = 0;
 
         let c = 0;
         for (let i = 0; i < result.length; i++) {
@@ -108,13 +106,11 @@ export const getTrends = (pid: number, callBack: Function) => {
             if (tmp == null) {
                 tmp = month;
                 name_month = setnameMonth(date)
-                m = m + 1;
             }
 
             if (tmp != month) {
                 tmp = month;
                 name_month = name_month + '-' + setnameMonth(date)
-                m = m + 1
             }
 
             if (currentDate !== formattedDate) {

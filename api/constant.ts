@@ -1,3 +1,4 @@
+import { format } from 'date-fns';
 import multer from "multer";
 
 export const SECRET = "HAM-JWT-HAM";
@@ -11,15 +12,15 @@ export const NOT_FOUND = 0;
 export const BAD_PASSWORD = -1;
 
 export const SQL_NULL = 1048;
+const options = { timeZone: 'Asia/Bangkok' };
+const DATE_TIME = new Date().toLocaleString('en-US', options)
 
 export const giveCurrentDateTime = () => {
-    const today = new Date();
-    const date = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + (today.getDate())
+    const date = format(DATE_TIME, 'yyyy-MM-dd');
     return date
 }
 
 export const giveCurrentTime = () => {
-    const today = new Date();
-    const time = today.getHours()+':'+today.getMinutes()+':'+today.getSeconds();
+    const time = format(DATE_TIME,'hh-mm')
     return time
 }

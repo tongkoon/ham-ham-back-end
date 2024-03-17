@@ -6,7 +6,6 @@
 // console.log(dateTime);
 // console.log(today.getDate());
 
-import { giveCurrentDateTime } from "./constant";
 
 
 
@@ -161,4 +160,11 @@ import { giveCurrentDateTime } from "./constant";
 
 // elo(2600,1,2300,0)
 
-console.log(giveCurrentDateTime());
+// console.log(giveCurrentDateTime());
+import bcrypt from 'bcrypt';
+bcrypt.hash('0000', 10).then((re)=>{
+    console.log(re);
+    
+})
+
+
