@@ -32,12 +32,12 @@ export const getPictureByUid = (uid: number, callBack: Function) => {
             getTrends(pid, (err: any, name_month: any, list_date: any, list_win: any, list_lose: any) => {
                 let pictureWithTrends = {
                     picture: result[i],
-                    detail: [{
+                    detail: {
                         name_month: name_month,
                         list_date: list_date,
                         list_win: list_win,
                         list_lose: list_lose
-                    }]
+                    }
                 };
                 picturesWithTrends.push(pictureWithTrends);
                 // console.log(result[i]);
