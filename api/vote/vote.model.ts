@@ -20,7 +20,7 @@ export const insert = (pic1: Vote, pic2: Vote, callBack: Function) => {
         const S_a = pic1.result
         const S_b = pic2.result
         console.log('reA'+S_a);
-console.log('reB'+S_b);
+        console.log('reB'+S_b);
 
         // เรทคะแนนที่ควรได้
         const E_a: number = +(1 / (1 + (10 ** ((Sc_b - Sc_a) / 400)))).toFixed(3)

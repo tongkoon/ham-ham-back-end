@@ -72,9 +72,8 @@ export const uploadPicture = (req: Request, res: Response) => {
 }
 
 export const findPictureRandom = (req: Request, res: Response) => {
-    const list: number[] = req.body.list 
     // const list: number[] = [1,3,5,8,13,14,17,18,19,20,21,22,25]
-    getPictureRandom(list,(err: any, result: any) => {
+    getPictureRandom((err: any, result: any) => {
         res.json({ ...RESPONSE_TRUE, pictures: result })
     })
 }
