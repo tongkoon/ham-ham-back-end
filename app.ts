@@ -1,6 +1,9 @@
 import bodyParser from "body-parser";
 import cors from "cors";
 import express from "express";
+import 'intl';
+import 'intl/locale-data/jsonp/en';
+Intl.DateTimeFormat().resolvedOptions().timeZone = 'Asia/Bangkok';
 
 import { router as t } from "./api/jwtToken";
 import { router as picture } from "./api/picture/picture.router";
