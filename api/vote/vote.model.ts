@@ -83,7 +83,7 @@ export const getTrends = (pid: number, callBack: Function) => {
         'ORDER BY `date`,`result`'
 
     conn.query(sql, pid, (err, result) => {
-        console.log(result);
+        // console.log(result);
 
         let currentDate = null;
         let list_date = [];
@@ -139,7 +139,7 @@ export const getTrends = (pid: number, callBack: Function) => {
         }
         // console.log(list_win);
         // console.log(list_lose);
-        console.log(name_month);
+        // console.log(name_month);
         callBack(err, name_month, list_date, list_win, list_lose)
     })
 }
