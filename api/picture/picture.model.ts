@@ -69,13 +69,26 @@ export const insert = (uid: number, url: string, callBack: Function) => {
         0,
         date
     ])
+    console.log(sql);
+    
     conn.query(sql, (err, result, fields) => {
         callBack(err, result)
     })
 }
 
-export const getPictureRandom = (callBack: Function) => {
-    const sql = 'select ' + ALL + ' from pictures ORDER BY RAND() LIMIT 2'
+export const getPictureRandom = (list_not:number[],callBack: Function) => {
+    console.log(list_not.length);
+    
+    let sql;
+    if(list_not.length != 0){
+        const pid_not = `(${list_not.join(',')})`;
+        sql = 'select ' + ALL + ' from pictures where pid not in '+pid_not+' ORDER BY RAND() LIMIT 2'
+        // sql = mysql.format(sql,[pid_not])
+    }else{
+        sql = 'select ' + ALL + ' from pictures ORDER BY RAND() LIMIT 2'
+    }
+    console.log(sql);
+    
     conn.query(sql, (err, result, fields) => {
         callBack(err, result)
     })
