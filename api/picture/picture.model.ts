@@ -30,21 +30,26 @@ export const getPictureByUid = (uid: number, callBack: Function) => {
         for (let i = 0; i < result.length; i++) {
             let pid = result[i].pid;
             getTrends(pid, (err: any, name_month: any, list_date: any, list_win: any, list_lose: any) => {
-                let pictureWithTrends = {
-                    picture: result[i],
-                    detail: {
-                        name_month: name_month,
-                        list_date: list_date,
-                        list_win: list_win,
-                        list_lose: list_lose
-                    }
-                };
+                let pictureWithTrends;
+                if (name_month == '') {
+                    pictureWithTrends = {
+                        picture: result[i],
+                        detail: {}
+                    };
+                } else {
+                    pictureWithTrends = {
+                        picture: result[i],
+                        detail: {
+                            name_month: name_month,
+                            list_date: list_date,
+                            list_win: list_win,
+                            list_lose: list_lose
+                        }
+                    };
+                }
+                console.log(pictureWithTrends.detail.name_month == null);
+                
                 picturesWithTrends.push(pictureWithTrends);
-                // console.log(result[i]);
-                // console.log(name_month);
-                // console.log(list_date);
-                // console.log(list_win);
-                // console.log(list_lose);
                 processedCount++;
                 if (processedCount === result.length) {
                     callBack(null, picturesWithTrends);

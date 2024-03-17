@@ -93,8 +93,6 @@ export const getTrends = (pid: number, callBack: Function) => {
         let tmp = null;
         let name_month = "";
         let m = 0;
-        // let data_tmp = ['2024-02-15', '2024-03-16', '2024-03-17',
-        //     '2024-03-18', '2024-03-19',]
 
         let c = 0;
         for (let i = 0; i < result.length; i++) {
