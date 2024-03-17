@@ -21,9 +21,22 @@ export const getPictureByPid = (pid: number, callBack: Function) => {
         callBack(err, result)
     })
 }
-
+const SQL_PIC_DIF_BY_UID = ` 
+    SELECT A.pid,A.uid,A.url,A.score,A.rank - B.rank AS dif,
+           DATE_FORMAT(A.date, \'%d %M %Y\') AS date
+    FROM 
+        (SELECT pid, score,uid,url,(@row_number:=@row_number+1) AS \`rank\`, CURDATE() AS \`date\`
+         FROM (SELECT @row_number:=0) AS init, pictures
+         where uid = ?
+         ORDER BY score DESC) AS A
+    JOIN
+        (SELECT pid, \`rank\`,score,date
+         FROM HistoryRank
+         WHERE date = DATE_SUB(CURDATE(), INTERVAL 1 DAY)) AS B
+    ON A.pid = B.pid
+`
 export const getPictureByUid = (uid: number, callBack: Function) => {
-    const sql = 'select ' + ALL + ' from pictures where uid = ?';
+    const sql = SQL_PIC_DIF_BY_UID//'select ' + ALL + ' from pictures where uid = ?';
     conn.query(sql, [uid], (err, result, fields) => {
         let picturesWithTrends: any[] = [];
         let processedCount = 0;

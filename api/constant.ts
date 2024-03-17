@@ -21,6 +21,6 @@ export const giveCurrentDateTime = () => {
 }
 
 export const giveCurrentTime = () => {
-    const time = format(DATE_TIME,'hh-mm')
+    const time = format(DATE_TIME,'hh:mm')
     return time
 }
