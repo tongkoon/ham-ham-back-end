@@ -34,7 +34,7 @@ export const getPictureByUid = (uid: number, callBack: Function) => {
                 if (name_month == '') {
                     pictureWithTrends = {
                         picture: result[i],
-                        detail: {}
+                        detail: null
                     };
                 } else {
                     pictureWithTrends = {
@@ -47,7 +47,7 @@ export const getPictureByUid = (uid: number, callBack: Function) => {
                         }
                     };
                 }
-                console.log(pictureWithTrends.detail.name_month == null);
+               
                 
                 picturesWithTrends.push(pictureWithTrends);
                 processedCount++;
