@@ -58,6 +58,21 @@ export const findByUserId = (req: Request, res: Response) => {
   });
 };
 
+export const findByUsername = (req: Request, res: Response) => {
+    const username = req.params.username;
+  
+    getUserByUsername(username, (err: any, result: any) => {
+      if (err) {
+        res.json(RESPONSE_FALSE_INTERNAL_SERVER_ERROR);
+      } else {
+        res.json({
+          ...RESPONSE_TRUE,
+          user: result[0],
+        });
+      }
+    });
+  };
+
 export const createUser = (req: Request, res: Response) => {
   let downloadUrl;
   const user: User = req.body;
