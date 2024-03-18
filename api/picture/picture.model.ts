@@ -29,7 +29,7 @@ const SQL_PIC_DIF_BY_UID = `
          FROM (SELECT @row_number:=0) AS init, pictures
          where uid = ?
          ORDER BY score DESC) AS A
-    JOIN
+    LEFT JOIN
         (SELECT pid, \`rank\`,score,date
          FROM HistoryRank
          WHERE date = DATE_SUB(CURDATE(), INTERVAL 1 DAY)) AS B
@@ -61,7 +61,6 @@ export const getPictureByUid = (uid: number, callBack: Function) => {
                     };
                 }
                
-                
                 picturesWithTrends.push(pictureWithTrends);
                 processedCount++;
                 if (processedCount === result.length) {
@@ -69,7 +68,6 @@ export const getPictureByUid = (uid: number, callBack: Function) => {
                 }
             })
         }
-        // callBack(err,result);
     })
 }
 
