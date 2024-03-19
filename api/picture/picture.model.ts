@@ -60,7 +60,7 @@ export const getPictureByUid = (uid: number, callBack: Function) => {
                         }
                     };
                 }
-               
+
                 picturesWithTrends.push(pictureWithTrends);
                 processedCount++;
                 if (processedCount === result.length) {
@@ -81,14 +81,14 @@ export const insert = (uid: number, url: string, callBack: Function) => {
         date
     ])
     console.log(sql);
-    
+
     conn.query(sql, (err, result, fields) => {
         callBack(err, result)
     })
 }
 
 export const getPictureRandom = (callBack: Function) => {
-    
+
     // let sql;
     // if(list_not.length != 0){
     //     const pid_not = `(${list_not.join(',')})`;
@@ -99,13 +99,29 @@ export const getPictureRandom = (callBack: Function) => {
     // }
     const sql = 'select ' + ALL + ' from pictures ORDER BY RAND() LIMIT 2'
     console.log(sql);
-    
+
     conn.query(sql, (err, result, fields) => {
         callBack(err, result)
     })
 }
 
 export const getPictureRank = (callBack: Function) => {
+    const SQL_RANK = `
+    SELECT A.pid,A.uid,A.username,A.avatar,A.url,A.score, A.rank,A.rank - B.rank AS dif,
+        DATE_FORMAT(A.date, '%d %M %Y') AS date
+    FROM 
+        (SELECT pid, score,user.uid,user.username,user.avatar, url,(@row_number:=@row_number+1) AS \`rank\`, CURDATE() AS \`date\`
+        FROM (SELECT @row_number:=0) AS init, pictures,user
+        where pictures.uid = user.uid
+        ORDER BY score DESC) AS A
+    JOIN
+        (SELECT pid, \`rank\`,score,date
+        FROM HistoryRank
+        WHERE date = DATE_SUB(CURDATE(), INTERVAL 1 DAY)) AS B
+    ON A.pid = B.pid
+    ORDER BY A.score DESC
+    LIMIT 10;
+    `
     const sql = SQL_RANK//'SELECT pid,user.uid,user.username,user.avatar,url,score,DATE_FORMAT(`date`, \'%d %M %Y\') AS date FROM `pictures`,user where pictures.uid = user.uid ORDER BY score DESC LIMIT 10'
     conn.query(sql, (err, result) => {
         callBack(err, result)
@@ -120,19 +136,5 @@ export const removePicture = (pid: number, callBack: Function) => {
     })
 }
 
-const SQL_RANK = `
-SELECT A.pid,A.uid,A.username,A.avatar,A.url,A.score, A.rank,A.rank - B.rank AS dif,
-       DATE_FORMAT(A.date, '%d %M %Y') AS date
-FROM 
-    (SELECT pid, score,user.uid,user.username,user.avatar, url,(@row_number:=@row_number+1) AS \`rank\`, CURDATE() AS \`date\`
-     FROM (SELECT @row_number:=0) AS init, pictures,user
-     where pictures.uid = user.uid
-     ORDER BY score DESC) AS A
-JOIN
-    (SELECT pid, \`rank\`,score,date
-     FROM HistoryRank
-     WHERE date = DATE_SUB(CURDATE(), INTERVAL 1 DAY)) AS B
-ON A.pid = B.pid
-ORDER BY A.score DESC
-LIMIT 10;
-`
+
+
