@@ -8,7 +8,7 @@ export const votePicture = (req: Request, res: Response) => {
     const pic1 = vote[0];
     const pic2 = vote[1];
     insert(pic1, pic2, (err: any, p1: any, p2: any) => {
-        res.json({ ...RESPONSE_TRUE, p1, p2 })
+        res.json({ ...RESPONSE_TRUE,result:{p1:p1, p2:p2}})
     })
 }
 
