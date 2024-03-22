@@ -36,8 +36,8 @@ export const insert = (pic1: Vote, pic2: Vote, callBack: Function) => {
         const point2 = +(k_b * (S_b - E_b)).toFixed(3)
 
         // ผลรวมคะแนนล่าสุด
-        const R_a: number = Sc_a + point1
-        const R_b: number = Sc_b + point2
+        const R_a: number = +(Sc_a + point1).toFixed(3)
+        const R_b: number = +(Sc_b + point2).toFixed(3)
 
         const date = giveCurrentDateTime();
 

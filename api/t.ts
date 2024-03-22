@@ -163,14 +163,14 @@ import { K } from "./vote/vote.model";
 // elo(2600,1,2300,0)
 
 // console.log(giveCurrentDateTime());
-        const Sc_a = 24;
-        const Sc_b = 50;
+        const Sc_a = 23;
+        const Sc_b = -10;
         console.log('scA'+Sc_a);
         console.log('scB'+Sc_b);
 
         // ผลแพ้ชนะ
-        const S_a = 1
-        const S_b = 0
+        const S_a = 0
+        const S_b = 1
         console.log('reA'+S_a);
         console.log('reB'+S_b);
 
@@ -191,8 +191,8 @@ import { K } from "./vote/vote.model";
         
 
         // ผลรวมคะแนนล่าสุด
-        const R_a: number = Sc_a + point1
-        const R_b: number = Sc_b + point2
+        const R_a: number = +(Sc_a + point1).toFixed(3)
+        const R_b: number = +(Sc_b + point2).toFixed(3)
         console.log('rA : '+R_a);
         console.log('rB : '+R_b);
         
