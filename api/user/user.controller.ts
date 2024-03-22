@@ -152,9 +152,16 @@ export const editUser = async (req: Request, res: Response) => {
   const username = req.body.username;
   const pwd = req.body.password;
   const new_pwd = req.body.newPassword;
-  const downloadUrl = await uploadPictureFirebase(req);
+  let downloadUrl ='';
 
-  removeAvatarFirebase(+uid);
+  if(typeof(req.body.avatar) != 'string'){
+    downloadUrl = await uploadPictureFirebase(req);
+    removeAvatarFirebase(+uid);
+  }else{
+    downloadUrl = req.body.avatar;
+  }
+  
+  
   // Update Name, Username and Picture
   updateNornal(name, username, downloadUrl, +uid, (err: any, result: any) => {
     if (err) {
