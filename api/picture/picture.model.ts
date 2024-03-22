@@ -40,35 +40,38 @@ export const getPictureByUid = (uid: number, callBack: Function) => {
     conn.query(sql, [uid], (err, result, fields) => {
         let picturesWithTrends: any[] = [];
         let processedCount = 0;
-        for (let i = 0; i < result.length; i++) {
-            let pid = result[i].pid;
-            getTrends(pid, (err: any, name_month: any, list_date: any, list_win: any, list_lose: any) => {
-                let pictureWithTrends;
-                if (name_month == '') {
-                    pictureWithTrends = {
-                        picture: result[i],
-                        detail: null
-                    };
-                } else {
-                    pictureWithTrends = {
-                        picture: result[i],
-                        detail: {
-                            name_month: name_month,
-                            list_date: list_date,
-                            list_win: list_win,
-                            list_lose: list_lose
-                        }
-                    };
-                }
+        if (result.length != 0) {
+            for (let i = 0; i < result.length; i++) {
+                let pid = result[i].pid;
+                getTrends(pid, (err: any, name_month: any, list_date: any, list_win: any, list_lose: any) => {
+                    let pictureWithTrends;
+                    if (name_month == '') {
+                        pictureWithTrends = {
+                            picture: result[i],
+                            detail: null
+                        };
+                    } else {
+                        pictureWithTrends = {
+                            picture: result[i],
+                            detail: {
+                                name_month: name_month,
+                                list_date: list_date,
+                                list_win: list_win,
+                                list_lose: list_lose
+                            }
+                        };
+                    }
 
-                picturesWithTrends.push(pictureWithTrends);
-                processedCount++;
-                if (processedCount === result.length) {
-                    callBack(null, picturesWithTrends);
-                }
-            })
+                    picturesWithTrends.push(pictureWithTrends);
+                    processedCount++;
+                    if (processedCount === result.length) {
+                        callBack(null, picturesWithTrends);
+                    }
+                })
+            }
+        } else {
+            callBack(null, picturesWithTrends);
         }
-        callBack(null,[])
     })
 }
 
