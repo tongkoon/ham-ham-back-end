@@ -32,8 +32,8 @@ export const insert = (pic1: Vote, pic2: Vote, callBack: Function) => {
         const k_b = K(Sc_b);
 
         // คะแนนที่ได้
-        const point1 = k_a * (S_a - E_a)
-        const point2 = k_b * (S_b - E_b)
+        const point1 = +(k_a * (S_a - E_a)).toFixed(3)
+        const point2 = +(k_b * (S_b - E_b)).toFixed(3)
 
         // ผลรวมคะแนนล่าสุด
         const R_a: number = Sc_a + point1

@@ -6,6 +6,8 @@
 // console.log(dateTime);
 // console.log(today.getDate());
 
+import { K } from "./vote/vote.model";
+
 
 
 
@@ -161,10 +163,37 @@
 // elo(2600,1,2300,0)
 
 // console.log(giveCurrentDateTime());
-import bcrypt from 'bcrypt';
-bcrypt.hash('0000', 10).then((re)=>{
-    console.log(re);
-    
-})
+        const Sc_a = 24;
+        const Sc_b = 50;
+        console.log('scA'+Sc_a);
+        console.log('scB'+Sc_b);
 
+        // ผลแพ้ชนะ
+        const S_a = 1
+        const S_b = 0
+        console.log('reA'+S_a);
+        console.log('reB'+S_b);
+
+        // เรทคะแนนที่ควรได้
+        const E_a: number = +(1 / (1 + (10 ** ((Sc_b - Sc_a) / 400)))).toFixed(3)
+        const E_b: number = +(1 / (1 + (10 ** ((Sc_a - Sc_b) / 400)))).toFixed(3)
+        console.log('EA'+E_a);
+        console.log('EB'+E_b);
+        // ค่า K ที่คำนวณจากคะแนนเดิม
+        const k_a = K(Sc_a);
+        const k_b = K(Sc_b);
+
+        // คะแนนที่ได้
+        const point1 = +(k_a * (S_a - E_a)).toFixed(3)
+        const point2 = +(k_b * (S_b - E_b)).toFixed(3)
+        console.log('pointA : '+point1);
+        console.log('pointB : '+point2);
+        
+
+        // ผลรวมคะแนนล่าสุด
+        const R_a: number = Sc_a + point1
+        const R_b: number = Sc_b + point2
+        console.log('rA : '+R_a);
+        console.log('rB : '+R_b);
+        
 
