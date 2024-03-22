@@ -68,6 +68,7 @@ export const getPictureByUid = (uid: number, callBack: Function) => {
                 }
             })
         }
+        callBack(null,[])
     })
 }
 
