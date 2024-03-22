@@ -163,8 +163,8 @@ import { K } from "./vote/vote.model";
 // elo(2600,1,2300,0)
 
 // console.log(giveCurrentDateTime());
-        const Sc_a = 23;
-        const Sc_b = -10;
+        const Sc_a = 3;
+        const Sc_b = -134;
         console.log('scA'+Sc_a);
         console.log('scB'+Sc_b);
 
