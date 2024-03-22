@@ -1,31 +1,31 @@
 import { Request, Response } from "express";
 import { User } from "../../model/User";
 import {
-    AVATAR_DEFAULT,
-    BAD_PASSWORD,
-    NOT_FOUND,
-    SECRET,
-    UNDEFINED,
+  AVATAR_DEFAULT,
+  BAD_PASSWORD,
+  NOT_FOUND,
+  SECRET,
+  UNDEFINED,
 } from "../constant";
 import {
-    RESPONSE_FALSE,
-    RESPONSE_FALSE_BAD_PASSWORD,
-    RESPONSE_FALSE_DUPLICATE_USER,
-    RESPONSE_FALSE_INTERNAL_SERVER_ERROR,
-    RESPONSE_FALSE_TOKEN,
-    RESPONSE_FALSE_USER_NOT_FOUND,
-    RESPONSE_TRUE,
+  RESPONSE_FALSE,
+  RESPONSE_FALSE_BAD_PASSWORD,
+  RESPONSE_FALSE_DUPLICATE_USER,
+  RESPONSE_FALSE_INTERNAL_SERVER_ERROR,
+  RESPONSE_FALSE_TOKEN,
+  RESPONSE_FALSE_USER_NOT_FOUND,
+  RESPONSE_TRUE,
 } from "../constant.response";
 import { removeAvatarFirebase, uploadPictureFirebase } from "../firebase";
 import { generateToken, verifyToken } from "../jwtToken";
 import {
-    authentication,
-    getAllUser,
-    getUserByUid,
-    getUserByUsername,
-    insert,
-    updateNornal,
-    updatePassword,
+  authentication,
+  getAllUser,
+  getUserByUid,
+  getUserByUsername,
+  insert,
+  updateNornal,
+  updatePassword,
 } from "./user.model";
 
 export const findAllUsers = (req: Request, res: Response) => {
@@ -158,7 +158,9 @@ export const editUser = async (req: Request, res: Response) => {
   // Update Name, Username and Picture
   updateNornal(name, username, downloadUrl, +uid, (err: any, result: any) => {
     if (err) {
-      res.json({ ...RESPONSE_FALSE });
+      console.log(err);
+      
+      res.json({ ...RESPONSE_FALSE});
     } else {
       // Check Lenght Password And New Password for Change
       if (pwd.length != 0 && new_pwd.length != 0) {

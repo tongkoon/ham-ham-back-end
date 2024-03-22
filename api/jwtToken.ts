@@ -2,7 +2,7 @@ import { format } from 'date-fns';
 import express from 'express';
 import { expressjwt } from "express-jwt";
 import jwt from "jsonwebtoken";
-import { SECRET, giveCurrentDateTime } from './constant';
+import { SECRET, giveCurrentDateTime, giveCurrentTime } from './constant';
 export const router = express.Router();
 
 export const jwtAuthen = expressjwt({
@@ -39,11 +39,13 @@ router.get('/test', (req, res) => {
     const dateTime = new Date().toLocaleString('en-US', options)
     const date = format(dateTime, 'yyyy-MM-dd');
     const time = format(dateTime,'hh-mm')
+    const tmp = giveCurrentTime();
     res.json({
         'giv': giveCurrentDateTime(),
         'date Serv': new Date(),
         'zone':dateTime,
         'date':date,
-        'time':time
+        'time':time,
+        'tmp':tmp
     })
 })
