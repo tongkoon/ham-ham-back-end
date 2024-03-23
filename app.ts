@@ -5,6 +5,7 @@ import 'intl';
 import 'intl/locale-data/jsonp/en';
 Intl.DateTimeFormat().resolvedOptions().timeZone = 'Asia/Bangkok';
 
+import { router as admin } from "./api/admin/admin.router";
 import { router as t } from "./api/jwtToken";
 import { router as picture } from "./api/picture/picture.router";
 import { router as user } from "./api/user/user.router";
@@ -23,6 +24,7 @@ app.use(bodyParser.json());
 app.use('/user',user)
 app.use('/picture',picture);
 app.use('/vote',vote);
+app.use('/admin',admin);
 
 app.use('/testToken',t)
 // app.use('/user',user);

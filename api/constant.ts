@@ -10,6 +10,7 @@ export const AVATAR_DEFAULT = 'https://firebasestorage.googleapis.com/v0/b/test-
 export const UNDEFINED = undefined;
 export const NOT_FOUND = 0;
 export const BAD_PASSWORD = -1;
+export const DEFAULT_TIME_RANDOM = 2;
 
 export const SQL_NULL = 1048;
 const options = { timeZone: 'Asia/Bangkok' };

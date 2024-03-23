@@ -7,6 +7,7 @@ router.get('/',findAllUsers); //Get All User
 router.get('/getById/:uid',findByUserId) // Get user By User ID
 router.get('/getByUsername/:username',findByUsername) // Get user By Username
 
+
 router.post('/register', upload.single('avatar'),createUser); //Register User
 router.post('/login',login); //Login
 router.post('/getUser',findUserByToken) //Get User By Token

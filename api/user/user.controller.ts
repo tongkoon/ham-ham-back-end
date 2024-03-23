@@ -1,3 +1,4 @@
+import bcrypt from 'bcrypt';
 import { Request, Response } from "express";
 import { User } from "../../model/User";
 import {
@@ -167,10 +168,15 @@ export const editUser = async (req: Request, res: Response) => {
         } else {
           downloadUrl = req.body.avatar;
         }
-        const payload = { username: username, password: new_pwd};
-        const token_jwt = generateToken(payload, SECRET);
         
-        update(+uid, name, username, downloadUrl, new_pwd, (err: any, result: any) => {
+        const hPwd = await bcrypt.hash(new_pwd, 10)
+        console.log(hPwd);
+        
+        const payload = { username: username, password: hPwd};
+        const token_jwt = generateToken(payload, SECRET);
+
+ 
+        update(+uid, name, username, downloadUrl, hPwd, (err: any, result: any) => {
           if (err) {
             res.json({ ...RESPONSE_FALSE_DUPLICATE_USER});
           }

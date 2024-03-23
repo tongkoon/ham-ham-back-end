@@ -69,8 +69,7 @@ export const authentication = (username: string, password: string, callback: Fun
 
 export const update = async (uid:number,name:string,username:string,avatar:string,password:string,callBack:Function) => {
     let sql = 'update user set name = ?,username = ?,password = ?, avatar = ? where uid = ?'   
-    const hPwd = await bcrypt.hash(password, 10)
-    conn.query(sql, [name,username,hPwd, avatar,uid], (err, result) => {
+    conn.query(sql, [name,username,password, avatar,uid], (err, result) => {
         callBack(err,result)
     });
 }
