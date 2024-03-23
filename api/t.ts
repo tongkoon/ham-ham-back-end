@@ -144,40 +144,73 @@
 // console.log('rA : '+R_a);
 // console.log('rB : '+R_b);
 
-import * as fs from 'fs';
+// import * as fs from 'fs';
 
-const data = {
-        setTime: 10
-};
+// const data = {
+//         setTime: 10
+// };
 
-const jsonData = JSON.stringify(data, null, 2);
+// const jsonData = JSON.stringify(data, null, 2);
 
-fs.readFile('timeRandom.json', 'utf8', (err, data) => {
-        if (err) {
-            console.error('Error reading file:', err);
-            return;
-        }
+// fs.readFile('timeRandom.json', 'utf8', (err, data) => {
+//         if (err) {
+//             console.error('Error reading file:', err);
+//             return;
+//         }
     
-        try {
-            // แปลงข้อมูล JSON เป็นออบเจกต์ JavaScript
-            const jsonData = JSON.parse(data);
-            console.log('Data from file:', jsonData.setTime);
-        } catch (error) {
-            console.error('Error parsing JSON:', error);
-        }
-    });
+//         try {
+//             // แปลงข้อมูล JSON เป็นออบเจกต์ JavaScript
+//             const jsonData = JSON.parse(data);
+//             console.log('Data from file:', jsonData.setTime);
+//         } catch (error) {
+//             console.error('Error parsing JSON:', error);
+//         }
+//     });
 
 
 
-function writeJson(json: string) {
-        fs.writeFile('timeRandom.json', json, (err) => {
-                if (err) {
-                        console.error('Error writing file:', err);
-                } else {
-                        console.log('Data has been written to data.json');
-                }
-        });
-}
+// function writeJson(json: string) {
+//         fs.writeFile('timeRandom.json', json, (err) => {
+//                 if (err) {
+//                         console.error('Error writing file:', err);
+//                 } else {
+//                         console.log('Data has been written to data.json');
+//                 }
+//         });
+// }
 
 
+// bcrypt.hash('1234', 10).then((h)=>{
+//         console.log(h);
+        
+// })
+// const h = '$2b$10$QC/nY4iLIQvvRZxV82dV7uBTKXUHKjd2Y2YbHcqJ/I8hGwAP056d2'
+
+// bcrypt.compare('12345', h).then(isPwd => {      
+//         if (isPwd) 
+//         { 
+//                 console.log("Pass");
+                       
+//         }
+//          else {
+//                 console.log("Fail");
+                       
+//                 }
+//                 })
+
+import fs from 'fs';
+
+// Specify the path to the secret file
+const secretFilePath = '/etc/secrets/my_secret_file.txt';
+
+// Read the contents of the secret file
+fs.readFile(secretFilePath, 'utf8', (err:any, data:any) => {
+    if (err) {
+        console.error('Error reading secret file:', err);
+        return;
+    }
+
+    console.log('Secret file contents:', data);
+    // Proceed with using the secret data in your application
+});
 

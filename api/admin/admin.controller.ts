@@ -22,8 +22,8 @@ export const insertTime = (req: Request, res: Response) => {
 export const getTime = (req:Request,res:Response)=> {
     readFile((err:any,result:any)=>{
         try {
-            const jsonData = JSON.parse(result);
-            res.json({...RESPONSE_TRUE,time:result.time})
+            // const jsonData = JSON.parse(result);
+            res.json({...RESPONSE_TRUE,time:result})
         } catch (error) {
             res.json({...RESPONSE_FALSE_READ_FILE})
         }
