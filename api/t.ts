@@ -198,19 +198,5 @@
 //                 }
 //                 })
 
-import fs from 'fs';
 
-// Specify the path to the secret file
-const secretFilePath = '/etc/secrets/my_secret_file.txt';
-
-// Read the contents of the secret file
-fs.readFile(secretFilePath, 'utf8', (err:any, data:any) => {
-    if (err) {
-        console.error('Error reading secret file:', err);
-        return;
-    }
-
-    console.log('Secret file contents:', data);
-    // Proceed with using the secret data in your application
-});
 

@@ -5,3 +5,4 @@ export const router = express.Router();
 router.post('/setTimeRandom',insertTime)
 
 router.get('/getTimeRandom',getTime)
+

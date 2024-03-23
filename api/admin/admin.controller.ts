@@ -5,8 +5,8 @@ import { readFile, writeFile } from "./admin.model";
 
 export const insertTime = (req: Request, res: Response) => {
     const time = req.body.time ?? DEFAULT_TIME_RANDOM;
-    const data = JSON.stringify({ setTime: time },null,2)
-    writeFile(data,(err:any)=>{
+    // const data = JSON.stringify({ setTime: time },null,2)
+    writeFile(time,(err:any)=>{
         if(err){
             res.json({...RESPONSE_FALSE_WRITE_FILE})
         }
