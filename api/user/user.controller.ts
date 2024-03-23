@@ -8,13 +8,12 @@ import {
   UNDEFINED,
 } from "../constant";
 import {
-  RESPONSE_FALSE,
   RESPONSE_FALSE_BAD_PASSWORD,
   RESPONSE_FALSE_DUPLICATE_USER,
   RESPONSE_FALSE_INTERNAL_SERVER_ERROR,
   RESPONSE_FALSE_TOKEN,
   RESPONSE_FALSE_USER_NOT_FOUND,
-  RESPONSE_TRUE,
+  RESPONSE_TRUE
 } from "../constant.response";
 import { removeAvatarFirebase, uploadPictureFirebase } from "../firebase";
 import { generateToken, verifyToken } from "../jwtToken";
@@ -24,8 +23,7 @@ import {
   getUserByUid,
   getUserByUsername,
   insert,
-  updateNornal,
-  updatePassword,
+  update
 } from "./user.model";
 
 export const findAllUsers = (req: Request, res: Response) => {
@@ -59,19 +57,19 @@ export const findByUserId = (req: Request, res: Response) => {
 };
 
 export const findByUsername = (req: Request, res: Response) => {
-    const username = req.params.username;
-  
-    getUserByUsername(username, (err: any, result: any) => {
-      if (err) {
-        res.json(RESPONSE_FALSE_INTERNAL_SERVER_ERROR);
-      } else {
-        res.json({
-          ...RESPONSE_TRUE,
-          user: result[0],
-        });
-      }
-    });
-  };
+  const username = req.params.username;
+
+  getUserByUsername(username, (err: any, result: any) => {
+    if (err) {
+      res.json(RESPONSE_FALSE_INTERNAL_SERVER_ERROR);
+    } else {
+      res.json({
+        ...RESPONSE_TRUE,
+        user: result[0],
+      });
+    }
+  });
+};
 
 export const createUser = (req: Request, res: Response) => {
   let downloadUrl;
@@ -150,60 +148,85 @@ export const editUser = async (req: Request, res: Response) => {
   const uid = req.params.uid;
   const name = req.body.name;
   const username = req.body.username;
-  const pwd = req.body.password;
-  const new_pwd = req.body.newPassword;
-  let downloadUrl ='';
+  const pwd = req.body.password ?? '';
+  const new_pwd = (req.body.newPassword === "" || req.body.newPassword === null) ? pwd: req.body.newPassword;
+  console.log(new_pwd);
+  
+  let downloadUrl = '';
 
-  if(typeof(req.body.avatar) != 'string'){
-    downloadUrl = await uploadPictureFirebase(req);
-    removeAvatarFirebase(+uid);
-  }else{
-    downloadUrl = req.body.avatar;
-  }
-  
-  
-  // Update Name, Username and Picture
-  updateNornal(name, username, downloadUrl, +uid, (err: any, result: any) => {
-    if (err) {
-      console.log(err);
-      
-      res.json({ ...RESPONSE_FALSE});
-    } else {
-      // Check Lenght Password And New Password for Change
-      if (pwd.length != 0 && new_pwd.length != 0) {
-        // Compare username and Password
-        authentication(username, pwd, (err: any, result: any) => {
+  getUserByUid(+uid, (err: any, result: any) => {
+    authentication(result.username, pwd, async (err: any, result: any) => {
+      if (result == NOT_FOUND) {
+        res.json(RESPONSE_FALSE_USER_NOT_FOUND);
+      } else if (result == BAD_PASSWORD) {
+        res.json(RESPONSE_FALSE_BAD_PASSWORD);
+      } else {
+        if (typeof (req.body.avatar) != 'string') {
+          downloadUrl = await uploadPictureFirebase(req);
+          removeAvatarFirebase(+uid);
+        } else {
+          downloadUrl = req.body.avatar;
+        }
+        const payload = { username: username, password: new_pwd};
+        const token_jwt = generateToken(payload, SECRET);
+        
+        update(+uid, name, username, downloadUrl, new_pwd, (err: any, result: any) => {
           if (err) {
-            res.json({ ...RESPONSE_FALSE, err });
-          } else {
-            // Password Incorrect
-            if (result == BAD_PASSWORD) {
-              res.json({
-                ...RESPONSE_FALSE_BAD_PASSWORD,
-                detail: "name and username success",
-              });
-            }
-            // Password Correct Change new Password
-            else {
-              updatePassword(new_pwd, +uid, (err: any, result: any) => {
-                if (err) {
-                  res.json({ ...RESPONSE_FALSE });
-                } else {
-                  res.json({
-                    ...RESPONSE_TRUE,
-                    detail: "name, username, picture and password success",
-                  });
-                }
-              });
-            }
+            res.json({ ...RESPONSE_FALSE_DUPLICATE_USER});
+          }
+          else {
+            res.json({...RESPONSE_TRUE,token:token_jwt})
           }
         });
-      } else {
-        res.json({
-          ...RESPONSE_TRUE,
-          detail: "name, username and picture success",
-        });
       }
-    }
-  });
+    })
+  })
+
+
+  // Update Name, Username and Picture
+  // update(+uid, name, username, downloadUrl, new_pwd, (err: any, result: any) => {
+
+  //   if (err) {
+  //     console.log(err);
+  //     res.json({ ...RESPONSE_FALSE });
+  //   }
+  //   else {
+
+      //   // Check Lenght Password And New Password for Change
+      //   if (pwd.length != 0 && new_pwd.length != 0) {
+      //     // Compare username and Password
+      //     authentication(username, pwd, (err: any, result: any) => {
+      //       if (err) {
+      //         res.json({ ...RESPONSE_FALSE, err });
+      //       } else {
+      //         // Password Incorrect
+      //         if (result == BAD_PASSWORD) {
+      //           res.json({
+      //             ...RESPONSE_FALSE_BAD_PASSWORD,
+      //             detail: "name and username success",
+      //           });
+      //         }
+      //         // Password Correct Change new Password
+      //         else {
+      //           updatePassword(new_pwd, +uid, (err: any, result: any) => {
+      //             if (err) {
+      //               res.json({ ...RESPONSE_FALSE });
+      //             } else {
+      //               res.json({
+      //                 ...RESPONSE_TRUE,
+      //                 detail: "name, username, picture and password success",
+      //               });
+      //             }
+      //           });
+      //         }
+      //       }
+      //     });
+      //   } else {
+      //     res.json({
+      //       ...RESPONSE_TRUE,
+      //       detail: "name, username and picture success",
+      //     });
+      //   }
+  //   }
+  // });
 };

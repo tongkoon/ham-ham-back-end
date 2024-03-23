@@ -67,11 +67,12 @@ export const authentication = (username: string, password: string, callback: Fun
     })
 }
 
-export const updateNornal = (name:string,username:string,avatar:string,uid:number,callBack:Function) => {
-    let sql = 'update user set name = ?,username = ?, avatar = ? where uid = ?'
-    conn.query(sql, [name,username, avatar,uid], (err, result) => {
+export const update = async (uid:number,name:string,username:string,avatar:string,password:string,callBack:Function) => {
+    let sql = 'update user set name = ?,username = ?,password = ?, avatar = ? where uid = ?'   
+    const hPwd = await bcrypt.hash(password, 10)
+    conn.query(sql, [name,username,hPwd, avatar,uid], (err, result) => {
         callBack(err,result)
-    })
+    });
 }
 
 
@@ -79,6 +80,6 @@ export const updatePassword = async (new_pwd:string,uid:number,callBack:Function
     const sql = 'update user set password = ? where uid = ?'
     const hPwd = await bcrypt.hash(new_pwd, 10)
     conn.query(sql,[hPwd,uid],(err,result)=>{
-        callBack(err,result)
+        callBack(err,hPwd)
     })
 }
