@@ -22,18 +22,18 @@ export const getPictureByPid = (pid: number, callBack: Function) => {
     })
 }
 const SQL_PIC_DIF_BY_UID = ` 
-    SELECT A.pid,A.uid,A.url,A.score,A.rank - B.rank AS dif,
-           DATE_FORMAT(A.date, \'%d %M %Y\') AS date
-    FROM 
-        (SELECT pid, score,uid,url,(@row_number:=@row_number+1) AS \`rank\`, CURDATE() AS \`date\`
-         FROM (SELECT @row_number:=0) AS init, pictures
-         where uid = ?
-         ORDER BY score DESC) AS A
-    LEFT JOIN
-        (SELECT pid, \`rank\`,score,date
-         FROM HistoryRank
-         WHERE date = DATE_SUB(CURDATE(), INTERVAL 1 DAY)) AS B
+SELECT A.pid,A.uid,A.url,A.score,A.score - B.score AS  difScore,A.rank,A.rank - B.rank AS difRank,
+DATE_FORMAT(A.date, \'%d %M %Y\') AS date
+FROM 
+    (SELECT pid, score,uid,url,(@row_number:=@row_number+1) AS \`rank\`, CURDATE() AS \`date\`
+    FROM (SELECT @row_number:=0) AS init, pictures
+    ORDER BY score DESC) AS A
+LEFT JOIN
+    (SELECT pid, \`rank\`,score,date
+    FROM HistoryRank
+    WHERE date = DATE_SUB(CURDATE(), INTERVAL 1 DAY)) AS B
     ON A.pid = B.pid
+where uid = ?
 `
 export const getPictureByUid = (uid: number, callBack: Function) => {
     const sql = SQL_PIC_DIF_BY_UID//'select ' + ALL + ' from pictures where uid = ?';
