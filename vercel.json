@@ -3,10 +3,7 @@
     "builds": [
         {
             "src": "app.ts",
-            "use": "@now/node",
-            "config": {
-                "NODE_ENV": "production"
-            }
+            "use": "@now/node"
         }
     ],
     "routes": [
@@ -14,6 +11,6 @@
             "src": "/(.*)",
             "dest": "app.ts"
         }
-    ],
-    "installCommand": "npm install date-fns"
+    ]
+    
 }
