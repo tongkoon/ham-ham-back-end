@@ -81,7 +81,7 @@ export const insert = (uid: number, url: string, callBack: Function) => {
     sql = mysql.format(sql, [
         uid,
         url,
-        0,
+        1000,
         date
     ])
     console.log(sql);
