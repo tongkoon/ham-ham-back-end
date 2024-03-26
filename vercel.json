@@ -15,7 +15,5 @@
             "dest": "app.ts"
         }
     ],
-    "installCommand": [
-        "npm install date-fns"
-    ]
+    "installCommand": "npm install date-fns"
 }
