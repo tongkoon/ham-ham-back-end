@@ -195,14 +195,15 @@ export const getTrends_2 = (pid: number, callBack: Function) => {
                 c++
             }
         }
-        const formattedDates = `(${list_ori_date.map(date => `'${date}'`).join(', ')})`;
-        const sql = `SELECT * FROM \`HistoryRank\` WHERE date in ${formattedDates} and pid = ? `
-        conn.query(sql,[pid],(err,result)=>{
-            const scores = Array.from({ length: list_date.length }, () => 0);
-            result.forEach((item:any, index:number) => {
-                scores[index] = item.score;
-            });
-            callBack(err, name_month,list_date, totalPoint,scores)
-        })
+        // const formattedDates = `(${list_ori_date.map(date => `'${date}'`).join(', ')})`;
+        // const sql = `SELECT * FROM \`HistoryRank\` WHERE date in ${formattedDates} and pid = ? `
+        // conn.query(sql,[pid],(err,result)=>{
+        //     const scores = Array.from({ length: list_date.length }, () => 0);
+        //     result.forEach((item:any, index:n) => {
+        //         scores[index] = item.score;
+        //     });
+        // })
+        callBack(err, name_month,list_date, totalPoint)
     })
+
 }
