@@ -168,6 +168,8 @@ export const getTrends_2 = (pid: number, callBack: Function) => {
         let name_month = "";
         let totalPoint = [];
         let list_date: any[] = [];
+        let list_ori_date: any[] = [];
+
 
         let c = 0;
         for (let i = 0; i < result.length; i++) {
@@ -188,10 +190,15 @@ export const getTrends_2 = (pid: number, callBack: Function) => {
 
             if (currentDate !== formattedDate) {
                 list_date[c] = formattedDate;
+                list_ori_date[c] = date;
                 currentDate = formattedDate;
                 c++
             }
         }
+        const formattedDates = `(${list_ori_date.map(date => `'${date}'`).join(', ')})`;
+        console.log(formattedDates);
+        // const sql = 'select '
+        
         callBack(err, name_month,list_date, totalPoint)
     })
 }

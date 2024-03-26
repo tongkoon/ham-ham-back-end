@@ -118,17 +118,16 @@ export const insert = (uid: number, url: string, callBack: Function) => {
     })
 }
 
-export const getPictureRandom = (callBack: Function) => {
-
-    // let sql;
-    // if(list_not.length != 0){
-    //     const pid_not = `(${list_not.join(',')})`;
-    //     sql = 'select ' + ALL + ' from pictures where pid not in '+pid_not+' ORDER BY RAND() LIMIT 2'
-    //     // sql = mysql.format(sql,[pid_not])
-    // }else{
-    //     sql = 'select ' + ALL + ' from pictures ORDER BY RAND() LIMIT 2'
-    // }
-    const sql = 'select ' + ALL + ' from pictures ORDER BY RAND() LIMIT 2'
+export const getPictureRandom = (list:number[],callBack: Function) => {
+    const list_not = list;
+    let sql;
+    if(list_not.length != 0){
+        const pid_not = `(${list_not.join(',')})`;
+        sql = 'select ' + ALL + ' from pictures where pid not in '+pid_not+' ORDER BY RAND() LIMIT 2'
+    }else{
+        sql = 'select ' + ALL + ' from pictures ORDER BY RAND() LIMIT 2'
+    }
+    // const sql = 'select ' + ALL + ' from pictures ORDER BY RAND() LIMIT 2'
     console.log(sql);
 
     conn.query(sql, (err, result, fields) => {
