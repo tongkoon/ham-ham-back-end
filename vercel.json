@@ -1,19 +1,21 @@
 {
-    "version":2,
-    "builds":[
+    "version": 2,
+    "builds": [
         {
-            "src":"app.ts",
-            "use":"@now/node",
-            "config": { "NODE_ENV": "production" }
+            "src": "app.ts",
+            "use": "@now/node",
+            "config": {
+                "NODE_ENV": "production"
+            }
         }
     ],
-    "routes":[
+    "routes": [
         {
-            "src":"/(.*)",
-            "dest":"app.ts"
+            "src": "/(.*)",
+            "dest": "app.ts"
         }
     ],
-    "dependencies": {
-        "date-fns": "^2.27.0" 
-      }
+    "installCommand": [
+        "npm install date-fns"
+    ]
 }
