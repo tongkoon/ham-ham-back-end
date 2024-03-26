@@ -2,7 +2,7 @@ import mysql from 'mysql'
 import { conn } from "../../dbconn"
 import { giveCurrentDateTime } from "../constant"
 import { removePictureFirebase } from '../firebase'
-import { getTrends } from '../vote/vote.model'
+import { getTrends_2 } from '../vote/vote.model'
 
 const ALL = 'pid,uid,url,score,DATE_FORMAT(`date`, \'%Y-%m-%d\') AS date'
 
@@ -43,7 +43,35 @@ export const getPictureByUid = (uid: number, callBack: Function) => {
         if (result.length != 0) {
             for (let i = 0; i < result.length; i++) {
                 let pid = result[i].pid;
-                getTrends(pid, (err: any, name_month: any, list_date: any, list_win: any, list_lose: any) => {
+                // V.1
+                // getTrends(pid, (err: any, name_month: any, list_date: any, list_win: any, list_lose: any) => {
+                //     let pictureWithTrends;
+                //     if (name_month == '') {
+                //         pictureWithTrends = {
+                //             picture: result[i],
+                //             detail: null
+                //         };
+                //     } else {
+                //         pictureWithTrends = {
+                //             picture: result[i],
+                //             detail: {
+                //                 name_month: name_month,
+                //                 list_date: list_date,
+                //                 list_win: list_win,
+                //                 list_lose: list_lose
+                //             }
+                //         };
+                //     }
+
+                //     picturesWithTrends.push(pictureWithTrends);
+                //     processedCount++;
+                //     if (processedCount === result.length) {
+                //         callBack(null, picturesWithTrends);
+                //     }
+                // })
+
+                // V.2
+                getTrends_2(pid, (err: any,name_month: any,list_date:any,list_total:any ) => {
                     let pictureWithTrends;
                     if (name_month == '') {
                         pictureWithTrends = {
@@ -55,9 +83,8 @@ export const getPictureByUid = (uid: number, callBack: Function) => {
                             picture: result[i],
                             detail: {
                                 name_month: name_month,
-                                list_date: list_date,
-                                list_win: list_win,
-                                list_lose: list_lose
+                                list_date:list_date,
+                                list_total: list_total
                             }
                         };
                     }
@@ -118,7 +145,7 @@ export const getPictureRank = (callBack: Function) => {
         FROM (SELECT @row_number:=0) AS init, pictures,user
         where pictures.uid = user.uid
         ORDER BY score DESC) AS A
-    JOIN
+    LEFT JOIN 
         (SELECT pid, \`rank\`,score,date
         FROM HistoryRank
         WHERE date = DATE_SUB(CURDATE(), INTERVAL 1 DAY)) AS B

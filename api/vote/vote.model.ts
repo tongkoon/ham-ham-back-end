@@ -13,20 +13,20 @@ export const insert = (pic1: Vote, pic2: Vote, callBack: Function) => {
         // Score เดิม
         const Sc_a = data[0].score;
         const Sc_b = data[1].score;
-        console.log('scA'+Sc_a);
-        console.log('scB'+Sc_b);
+        console.log('scA' + Sc_a);
+        console.log('scB' + Sc_b);
 
         // ผลแพ้ชนะ
         const S_a = pic1.result
         const S_b = pic2.result
-        console.log('reA'+S_a);
-        console.log('reB'+S_b);
+        console.log('reA' + S_a);
+        console.log('reB' + S_b);
 
         // เรทคะแนนที่ควรได้
         const E_a: number = +(1 / (1 + (10 ** ((Sc_b - Sc_a) / 400)))).toFixed(3)
         const E_b: number = +(1 / (1 + (10 ** ((Sc_a - Sc_b) / 400)))).toFixed(3)
-        console.log('EA'+E_a);
-        console.log('EB'+E_b);
+        console.log('EA' + E_a);
+        console.log('EB' + E_b);
         // ค่า K ที่คำนวณจากคะแนนเดิม
         const k_a = K(Sc_a);
         const k_b = K(Sc_b);
@@ -75,19 +75,22 @@ function insertPoint(pid: number, result: number, point: number, date: string) {
 }
 
 export const getTrends = (pid: number, callBack: Function) => {
-    const sql = 'SELECT pid,result,SUM(point) as totalPoint,DATE_FORMAT(`date`, \'%Y-%m-%d\') AS date ' +
-        'FROM `vote` ' +
-        'WHERE `date` >= DATE_SUB(CURDATE(), INTERVAL 6 DAY) and pid = ? ' +
-        'GROUP BY result,date ' +
-        'ORDER BY `date`,`result`'
+    const sql = `
+    SELECT pid,result,SUM(point) as totalPoint,DATE_FORMAT(\`date\`, \'%Y-%m-%d\') AS date
+    FROM vote
+    WHERE date >= DATE_SUB(CURDATE(), INTERVAL 6 DAY) and pid = ? 
+    GROUP BY result,date 
+    ORDER BY date,result
+    `
 
     conn.query(sql, pid, (err, result) => {
         // console.log(result);
 
         let currentDate = null;
-        let list_date = [];
-        let list_win = [];
-        let list_lose = [];
+        let list_date: any[] = [];
+        let list_win: any[] = [];
+        let list_lose: any[] = [];
+        let list_ori_date = [];
 
         let tmp = null;
         let name_month = "";
@@ -115,6 +118,7 @@ export const getTrends = (pid: number, callBack: Function) => {
 
             if (currentDate !== formattedDate) {
                 list_date[c] = formattedDate;
+                list_ori_date[c] = date;
                 currentDate = formattedDate;
 
                 list_lose[c] = 0;
@@ -131,14 +135,63 @@ export const getTrends = (pid: number, callBack: Function) => {
                 }
             }
         }
+
         // console.log(list_win);
         // console.log(list_lose);
-        // console.log(name_month);
-        callBack(err, name_month, list_date, list_win, list_lose)
+        // console.log(list_ori_date);
+        const formattedDates = `(${list_ori_date.map(date => `'${date}'`).join(', ')})`;
+        conn.query(`SELECT score FROM HistoryRank WHERE pid = ? and date in ${formattedDates}`, [pid], (err, result) => {
+            const scores = result.map((item:any) => item.score);
+            // console.log(scores);
+            
+            callBack(err, name_month, list_date, list_win, list_lose,scores)
+        })
     })
 }
 
 function setnameMonth(date: string) {
     const name_month = new Intl.DateTimeFormat('en-US', { month: 'long' }).format(new Date(date));
     return name_month;
+}
+
+export const getTrends_2 = (pid: number, callBack: Function) => {
+    const sql = `
+    SELECT pid,SUM(point) as totalPoint,DATE_FORMAT(\`date\`, '%Y-%m-%d') AS date 
+    FROM \`vote\` 
+    WHERE \`date\` >= DATE_SUB(CURDATE(), INTERVAL 6 DAY) and pid = ?
+    GROUP BY date 
+    ORDER BY \`date\``
+
+    conn.query(sql, [pid], (err, result) => {
+        let tmp = null;
+        let currentDate = null;
+        let name_month = "";
+        let totalPoint = [];
+        let list_date: any[] = [];
+
+        let c = 0;
+        for (let i = 0; i < result.length; i++) {
+            let date = result[i].date;
+            let month = new Date(date).getMonth() + 1;
+            totalPoint[i] = result[i].totalPoint;
+            let formattedDate = new Date(date).getDate();
+
+            if (tmp == null) {
+                tmp = month;
+                name_month = setnameMonth(date)
+            }
+
+            if (tmp != month) {
+                tmp = month;
+                name_month = name_month + '-' + setnameMonth(date)
+            }
+
+            if (currentDate !== formattedDate) {
+                list_date[c] = formattedDate;
+                currentDate = formattedDate;
+                c++
+            }
+        }
+        callBack(err, name_month,list_date, totalPoint)
+    })
 }
