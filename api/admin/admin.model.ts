@@ -1,25 +1,18 @@
 import dotenv from 'dotenv';
-import * as fs from 'fs';
+import { conn } from '../../dbconn';
 
 dotenv.config();
 
-export const writeFile = (json: string, callBack: Function) => {
-    // const path = '/etc/secrets/time_random.env'
-    fs.writeFile('etc/secrets/time_random.env', "json", (err) => {
-        if (err) {
-            callBack(err)
-        } else {
-            callBack(null)
-            console.log('Data has been written to timeRandom.json');
-        }
-    });
+export const insert = (aid:number,time:number,callBack:Function) =>{
+    const sql = 'INSERT INTO `TimeAdmin`(`aid`, `time`) VALUES (?,?)'
+    conn.query(sql,[aid,time],(err,result)=>{
+        callBack(err,result);
+    })
 }
 
-export const readFile = (callBack:Function)=>{
-    fs.readFile('/etc/secrets/my_secret_file.txt', 'utf8', (err, data) => {
-        console.log(err);
-        console.log(data);
-        
-        callBack(err,data)
-    });
+export const update = (aid:number,time:number,callBack:Function) =>{
+    const sql = 'UPDATE `TimeAdmin` SET `time`= ? WHERE aid = ?'
+    conn.query(sql,[time,aid],(err,result)=>{
+        callBack(err,result);
+    })
 }

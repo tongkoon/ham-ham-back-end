@@ -1,33 +1,31 @@
 import { Request, Response } from "express";
-import { DEFAULT_TIME_RANDOM, UNDEFINED } from "../constant";
-import { RESPONSE_FALSE_READ_FILE, RESPONSE_FALSE_WRITE_FILE, RESPONSE_TRUE, RESPONSE_TRUE_TIME_DEFAULT } from "../constant.response";
-import { readFile, writeFile } from "./admin.model";
+import { RESPONSE_FALSE, RESPONSE_TRUE } from "../constant.response";
+import { insert, update } from "./admin.model";
 
 export const insertTime = (req: Request, res: Response) => {
-    const time = req.body.time ?? DEFAULT_TIME_RANDOM;
-    const data = JSON.stringify({ setTime: time },null,2)
-    writeFile(data,(err:any)=>{
+    const aid = req.body.uid
+    const time = req.body.time
+
+    insert(aid,time,(err:any,result:any)=>{
         if(err){
-            res.json({...RESPONSE_FALSE_WRITE_FILE})
-        }
-        else if(req.body.time == UNDEFINED){
-            res.json({...RESPONSE_TRUE_TIME_DEFAULT})
-        }
-        else{
-            res.json({...RESPONSE_TRUE})
+            res.json({...RESPONSE_FALSE})
+        }else{
+            res.json({...RESPONSE_TRUE,
+                affected_row: result.affectedRows,
+                last_idx: result.insertId,})
         }
     })
 }
 
-export const getTime = (req:Request,res:Response)=> {
-    readFile((err:any,result:any)=>{
-        try {
-            console.log(result);
-            
-            const jsonData = JSON.parse(result);
-            res.json({...RESPONSE_TRUE,time:result})
-        } catch (error) {
-            res.json({...RESPONSE_FALSE_READ_FILE})
+export const updateTime = (req:Request,res:Response)=> {
+    const aid = req.body.uid
+    const time = req.body.time
+    update(aid,time,(err:any,result:any)=>{
+        if(err){
+            res.json({...RESPONSE_FALSE})
+        }else{
+            res.json({...RESPONSE_TRUE,
+                affected_row: result.affectedRows})
         }
     })
 }

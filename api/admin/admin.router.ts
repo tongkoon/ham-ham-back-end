@@ -1,8 +1,8 @@
 import express from 'express';
-import { getTime, insertTime } from './admin.controller';
+import { insertTime, updateTime } from './admin.controller';
 export const router = express.Router();
 
 router.post('/setTimeRandom',insertTime)
-
-router.get('/getTimeRandom',getTime)
+router.put('/updateTimeRandom',updateTime)
+// router.get('/getTimeRandom',getTime)
 
