@@ -3,7 +3,8 @@
     "builds":[
         {
             "src":"app.ts",
-            "use":"@now/node"
+            "use":"@now/node",
+            "config": { "NODE_ENV": "production" }
         }
     ],
     "routes":[
@@ -11,5 +12,8 @@
             "src":"/(.*)",
             "dest":"app.ts"
         }
-    ]
+    ],
+    "dependencies": {
+        "date-fns": "^2.0.0"
+    }
 }
