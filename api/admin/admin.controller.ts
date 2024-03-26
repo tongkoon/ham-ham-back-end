@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { RESPONSE_FALSE, RESPONSE_TRUE } from "../constant.response";
-import { insert, update } from "./admin.model";
+import { insert, selectTime, update } from "./admin.model";
 
 export const insertTime = (req: Request, res: Response) => {
     const aid = req.body.uid
@@ -26,6 +26,17 @@ export const updateTime = (req:Request,res:Response)=> {
         }else{
             res.json({...RESPONSE_TRUE,
                 affected_row: result.affectedRows})
+        }
+    })
+}
+
+export const getTime = (req:Request,res:Response)=> {
+    selectTime((err:any,result:any) => {
+        if(err){
+            res.json({...RESPONSE_FALSE})
+        }else{
+            res.json({...RESPONSE_TRUE,
+                ...result})
         }
     })
 }
