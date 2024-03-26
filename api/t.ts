@@ -199,4 +199,19 @@
 //                 })
 
 
+const time = new Date();
+console.log('1 :'+time);
+
+const time20 = new Date();
+time20.setSeconds(time20.getSeconds() - 20);
+console.log('2: '+time20);
+
+if(time20.getTime() >= time.getTime()){
+    console.log("mak"); 
+}
+else{
+    console.log("noi"); 
+}
+
+
 

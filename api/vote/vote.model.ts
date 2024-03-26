@@ -166,7 +166,7 @@ export const getTrends_2 = (pid: number, callBack: Function) => {
         let tmp = null;
         let currentDate = null;
         let name_month = "";
-        let totalPoint = [];
+        let totalPoint: any[] = [];
         let list_date: any[] = [];
         let list_ori_date: any[] = [];
 
@@ -196,9 +196,13 @@ export const getTrends_2 = (pid: number, callBack: Function) => {
             }
         }
         const formattedDates = `(${list_ori_date.map(date => `'${date}'`).join(', ')})`;
-        console.log(formattedDates);
-        // const sql = 'select '
-        
-        callBack(err, name_month,list_date, totalPoint)
+        const sql = `SELECT * FROM \`HistoryRank\` WHERE date in ${formattedDates} and pid = ? `
+        conn.query(sql,[pid],(err,result)=>{
+            const scores = Array.from({ length: list_date.length }, () => 0);
+            result.forEach((item:any, index:number) => {
+                scores[index] = item.score;
+            });
+            callBack(err, name_month,list_date, totalPoint,scores)
+        })
     })
 }

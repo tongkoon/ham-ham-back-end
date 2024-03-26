@@ -71,7 +71,7 @@ export const getPictureByUid = (uid: number, callBack: Function) => {
                 // })
 
                 // V.2
-                getTrends_2(pid, (err: any,name_month: any,list_date:any,list_total:any ) => {
+                getTrends_2(pid, (err: any,name_month: any,list_date:any,list_total:any ,list_score:any) => {
                     let pictureWithTrends;
                     if (name_month == '') {
                         pictureWithTrends = {
@@ -84,7 +84,8 @@ export const getPictureByUid = (uid: number, callBack: Function) => {
                             detail: {
                                 name_month: name_month,
                                 list_date:list_date,
-                                list_total: list_total
+                                list_total: list_total,
+                                list_score: list_score
                             }
                         };
                     }
