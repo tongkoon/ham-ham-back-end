@@ -25,7 +25,7 @@ const SQL_PIC_DIF_BY_UID = `
 SELECT A.pid,A.uid,A.url,A.score,A.score - B.score AS  difScore,A.rank,A.rank - B.rank AS difRank,
 DATE_FORMAT(A.date, \'%d %M %Y\') AS date
 FROM 
-    (SELECT pid, score,uid,url,(@row_number:=@row_number+1) AS \`rank\`, CURDATE() AS \`date\`
+    (SELECT pid, score,uid,url,(@row_number:=@row_number+1) AS \`rank\`, \`date\`
     FROM (SELECT @row_number:=0) AS init, pictures
     ORDER BY score DESC) AS A
 LEFT JOIN
