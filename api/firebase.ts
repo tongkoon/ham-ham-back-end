@@ -2,7 +2,7 @@ import { Request } from 'express';
 import { initializeApp } from 'firebase/app';
 import { deleteObject, getDownloadURL, getStorage, ref, uploadBytesResumable } from "firebase/storage";
 import firebaseConfig from '../config/firebase.config';
-import { PATH_FIREBASE_STORAGE, giveCurrentDateTime, giveCurrentTime } from './constant';
+import { AVATAR_DEFAULT, PATH_FIREBASE_STORAGE, giveCurrentDateTime, giveCurrentTime } from './constant';
 import { getPictureByPid } from './picture/picture.model';
 import { getUserByUid } from './user/user.model';
 
@@ -13,7 +13,7 @@ export async function uploadPictureFirebase(req: Request) {
     const date = giveCurrentDateTime();
     const time = giveCurrentTime();
     const name = generatePictureName(20);
-    const storageRef = ref(storage, `files/${name}`+date+'-'+time);
+    const storageRef = ref(storage, `files/${name}` + date + '-' + time);
     const metadata = {
         contentType: req.file?.mimetype,
     }
@@ -29,7 +29,7 @@ export function removePictureFirebase(pid: number) {
         imageUrl = await result[0].url;
         console.log(imageUrl);
 
-        const fileName = convert_url_namefile(imageUrl); 
+        const fileName = convert_url_namefile(imageUrl);
         const imagePath = PATH_FIREBASE_STORAGE + fileName;
         const imageRef = ref(storage, imagePath);
         try {
@@ -56,17 +56,20 @@ export function removeAvatarFirebase(uid: number) {
     let avatarUrl;
     getUserByUid(+uid, async (err: any, result: any) => {
         avatarUrl = await result.avatar;
-        console.log(avatarUrl);
+        if (avatarUrl != AVATAR_DEFAULT) {
+            console.log(avatarUrl);
 
-        const fileName = convert_url_namefile(avatarUrl); 
-        const imagePath = PATH_FIREBASE_STORAGE + fileName;
-        const imageRef = ref(storage, imagePath);
-        try {
-            // ทำการลบไฟล์
-            await deleteObject(imageRef);
-            console.log(`Image at ${imagePath} has been deleted successfully.`);
-        } catch (error) {
-            console.error('Error deleting image:', error);
+            const fileName = convert_url_namefile(avatarUrl);
+            const imagePath = PATH_FIREBASE_STORAGE + fileName;
+            const imageRef = ref(storage, imagePath);
+
+            try {
+                // ทำการลบไฟล์
+                await deleteObject(imageRef);
+                console.log(`Image at ${imagePath} has been deleted successfully.`);
+            } catch (error) {
+                console.error('Error deleting image:', error);
+            }
         }
     })
 }

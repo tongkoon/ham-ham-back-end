@@ -6,6 +6,8 @@
 // console.log(dateTime);
 // console.log(today.getDate());
 
+import { AVATAR_DEFAULT } from "./constant";
+
 
 
 
@@ -199,19 +201,24 @@
 //                 })
 
 
-const time = new Date();
-console.log('1 :'+time);
+// const time = new Date();
+// console.log('1 :'+time);
 
-const time20 = new Date();
-time20.setSeconds(time20.getSeconds() - 20);
-console.log('2: '+time20);
+// const time20 = new Date();
+// time20.setSeconds(time20.getSeconds() - 20);
+// console.log('2: '+time20);
 
-if(time20.getTime() >= time.getTime()){
-    console.log("mak"); 
+// if(time20.getTime() >= time.getTime()){
+//     console.log("mak"); 
+// }
+// else{
+//     console.log("noi"); 
+// }
+const avatarUrl:string = 'https://firebasestorage.googleapis.com/v0/b/test-upload-image-44e6d.appspot.com/o/files%2FDefaultPic.png?alt=media&token=d87a7086-a6e3-4814-bc01-bdf8722f4c7b'
+if (avatarUrl != AVATAR_DEFAULT) {
+    console.log('re');
+}else{
+    console.log("con");
+    
 }
-else{
-    console.log("noi"); 
-}
-
-
 
