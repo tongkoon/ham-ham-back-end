@@ -141,7 +141,7 @@ export const getPictureRank = (callBack: Function) => {
     SELECT A.pid,A.uid,A.username,A.avatar,A.url,A.score, A.rank,A.rank - B.rank AS dif,
         DATE_FORMAT(A.date, '%d %M %Y') AS date
     FROM 
-        (SELECT pid, score,user.uid,user.username,user.avatar, url,(@row_number:=@row_number+1) AS \`rank\`, CURDATE() AS \`date\`
+        (SELECT pid, score,user.uid,user.username,user.avatar, url,(@row_number:=@row_number+1) AS \`rank\`,  \`date\`
         FROM (SELECT @row_number:=0) AS init, pictures,user
         where pictures.uid = user.uid
         ORDER BY score DESC) AS A
